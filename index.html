@@ -1,35 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <!-- Meta tags mantidas e otimizadas -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Washington Verdan - Funcionário público , escritor  e criador de conteúdo motivacional. Conheça meus livros, vídeos e conexões.">
-<meta name="keywords" content="Washington Verdan, provérbios, livros motivacionais, autor brasileiro, conteúdo inspiracional, YouTube, Instagram">
-<meta name="author" content="Washington Verdan">
+    <meta name="description" content="Washington Verdan - Funcionário público, escritor e criador de conteúdo motivacional. Conheça meus livros, vídeos e conexões.">
+    <meta name="keywords" content="Washington Verdan, provérbios, livros motivacionais, autor brasileiro, conteúdo inspiracional, YouTube, Instagram">
+    <meta name="author" content="Washington Verdan">
 
-<!-- Open Graph (para redes sociais) -->
-<meta property="og:title" content="Washington Verdan | Autor e Criador de Conteúdo Inspiracional">
-<meta property="og:description" content="Descubra meus livros, provérbios diários e canais de conexão.">
-<meta property="og:image" content="https://i.imgur.com/WUTs9Qh.png">
-<meta property="og:url" content="https://washingtonverdan.github.io/Washington-Verdan/">
-<h1 class="nome-principal">Washington Verdan</h1>
-<!-- Schema Markup (para rich snippets) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Washington Verdan",
-  "jobTitle": "Funcionário Público e Autor",
-  "url": "https://washingtonverdan.github.io/Washington-Verdan/",
-  "sameAs": [
-    "https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD",
-    "https://www.youtube.com/@contacertadicas",
-   "https://sites.google.com/view/proverbiodiario/in%C3%ADcio", "https://www.instagram.com/washingtonverdan",
-  ]
-}
-</script>
-    <title>Site Pessoal</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Washington Verdan | Autor e Criador de Conteúdo Inspiracional">
+    <meta property="og:description" content="Descubra meus livros, provérbios diários e canais de conexão.">
+    <meta property="og:image" content="https://i.imgur.com/WUTs9Qh.png">
+    <meta property="og:url" content="https://washingtonverdan.github.io/Washington-Verdan/">
+
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Washington Verdan",
+        "jobTitle": "Funcionário Público e Autor",
+        "url": "https://washingtonverdan.github.io/Washington-Verdan/",
+        "sameAs": [
+            "https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD",
+            "https://www.youtube.com/@contacertadicas",
+            "https://sites.google.com/view/proverbiodiario/in%C3%ADcio",
+            "https://www.instagram.com/washingtonverdan"
+        ]
+    }
+    </script>
+
+    <title>Washington Verdan | Autor e Criador de Conteúdo</title>
+
     <style>
+        /* Reset e Estilos Gerais */
         * {
             margin: 0;
             padding: 0;
@@ -37,21 +42,17 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background-color: #121212;
             color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
+        /* Efeito de Partículas */
         .canvas-container {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -59,119 +60,126 @@
             z-index: -1;
         }
 
-        canvas {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #0a0a2e, #1a1a4a);
-            opacity: 0.7;
-        }
-
-        .content {
-            text-align: center;
-            z-index: 1;
-        }
-
-        
-        
-
-        
-
-        .button-text {
-            font-size: 10px;
-            margin-top: 5px;
-        .nome-principal {
-    font-family: 'Arial', sans-serif;
-    font-size: 42px;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #0ff; /* Cor neon azul */
-    text-align: center;
-    position: relative;
-    letter-spacing: 2px;
-    text-shadow: 
-        0 0 5px #0ff, 
-        0 0 10px #0ff, 
-        0 0 15px #0ff, 
-        0 0 20px rgba(0, 255, 255, 0.8);
-    animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow {
-    0% {
-        text-shadow: 
-            0 0 5px #0ff, 
-            0 0 10px #0ff, 
-            0 0 15px #0ff, 
-            0 0 20px rgba(0, 255, 255, 0.6);
-    }
-    100% {
-        text-shadow: 
-            0 0 8px #0ff, 
-            0 0 15px #0ff, 
-            0 0 25px #0ff, 
-            0 0 35px rgba(0, 255, 255, 1);
-    }
-}
-
-.nome-principal::after {
-    content: '';
-    display: block;
-    width: 70%;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #0ff, transparent);
-    margin: 8px auto;
-}    color: #fff;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
-        }
-
-        #image {
-            position: absolute;
+        /* Camada de Overlay */
+        .overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            opacity: 0.5;
-            transition: opacity 3s ea.botao {
-            font-family: Arial, sans-serif;
-            font-size: 18px;
-            font-weight: bold;
-            color: #0ff;
+            background: radial-gradient(ellipse at center, rgba(18,18,18,0.8) 0%, rgba(18,18,18,0.9) 100%);
+            z-index: 0;
+        }
+
+        /* Conteúdo Principal */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* Nome Principal */
+        .nome-principal {
+            font-family: 'Arial', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 700;
             text-transform: uppercase;
-            padding: 15px 30px;
+            color: #0ff;
+            margin: 2rem 0;
+            line-height: 1.1;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+            animation: neonPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            0% { text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff; }
+            100% { text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 25px #0ff; }
+        }
+
+        /* Container de Botões */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Estilos dos Botões */
+        .botao {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 1.5rem;
             border: 2px solid #0ff;
-            background: transparent;
-            cursor: pointer;
+            border-radius: 8px;
+            background: rgba(0, 255, 255, 0.1);
+            color: #0ff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
             position: relative;
             overflow: hidden;
-            transition: 0.3s;
-            box-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
         }
 
         .botao::before {
-            content: "";
+            content: '';
             position: absolute;
-            width: 500%;
-            height: 500%;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.2) 10%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0;
-            transition: 0.3s;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
         }
 
         .botao:hover {
-            background: #0ff;
-            color: #000;
-            box-shadow: 0 0 15px #0ff, 0 0 30px #0ff;
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
         }
 
         .botao:hover::before {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1.2);
-        }se-in-out;
-            z-index: 0;
+            left: 100%;
+        }
+
+        /* Imagem de Perfil */
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid #0ff;
+            margin: 2rem auto;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .botao {
+                padding: 1rem;
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -179,43 +187,38 @@
     <div class="canvas-container">
         <canvas id="canvas"></canvas>
     </div>
-    
-    <img id="image" src="https://i.imgur.com/WUTs9Qh.png" alt="Imagem">
 
-    <div class="content">
-        <div id="name">
-            <div class="name-part">Washington</div>
-            <div class="name-part">Verdan</div>
-        </div>
+    <div class="overlay"></div>
+
+    <main class="main-content">
+        <img src="https://i.imgur.com/WUTs9Qh.png" alt="Washington Verdan" class="profile-image">
         
-        <div class="button-container">
-            
-          <a href="https://sites.google.com/view/proverbiodiario/in%C3%ADcio" target="_blank" class="button">
-                <div class="button-text">Provérbios</div>
-          </a>
-            
-            <a href="https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD?ref=ap_rdr&isDramIntegrated=true&shoppingPortalEnabled=true" target="_blank" class="button">
-                <div class="button-text">Livros</div>
-            </a>
+        <h1 class="nome-principal">Washington<br>Verdan</h1>
 
-            <a href="https://www.youtube.com/@contacertadicas" target="_blank" class="button">
-                <div class="button-text">YouTube</div>
+        <div class="button-grid">
+            <a href="https://sites.google.com/view/proverbiodiario/in%C3%ADcio" target="_blank" class="botao">
+                Provérbios Diários
             </a>
-
-            <a href="https://www.instagram.com/washingtonverdan" target="_blank" class="button">
-                <div class="button-text">Instagram</div>
+            <a href="https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD" target="_blank" class="botao">
+                Meus Livros
             </a>
-
-            <a href="https://wa.me/5527997566512" target="_blank" class="button">
-                <div class="button-text">WhatsApp</div>
+            <a href="https://www.youtube.com/@contacertadicas" target="_blank" class="botao">
+                Canal YouTube
             </a>
-            <a href="https://washingtonverdan.github.io/alcoolxgasolina-/" target="_blank" class="button">
-                <div class="button-text">AlcxGas</div>
+            <a href="https://www.instagram.com/washingtonverdan" target="_blank" class="botao">
+                Instagram
+            </a>
+            <a href="https://wa.me/5527997566512" target="_blank" class="botao">
+                WhatsApp
+            </a>
+            <a href="https://washingtonverdan.github.io/alcoolxgasolina-/" target="_blank" class="botao">
+                Calculadora Álcool x Gasolina
             </a>
         </div>
-    </div>
+    </main>
 
     <script>
+        // Script das partículas mantido igual
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let particlesArray = [];
@@ -305,13 +308,6 @@
 
         init();
         animate();
-
-        window.onload = function() {
-            const image = document.getElementById('image');
-            setTimeout(() => {
-                image.style.opacity = 0.6;
-            }, 100);
-        };
     </script>
 </body>
 </html>
