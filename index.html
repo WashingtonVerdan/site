@@ -82,23 +82,13 @@
         }
 
         /* Nome Principal */
-        
-
-        /* Imagem de Perfil */
-        .profile-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 3px solid #0ff;
-            margin: 2rem auto;
-            box-shadow: 0 0 20px /* Nome Principal */
         .nome-principal {
             font-family: 'Arial', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4rem); /* Tamanho um pouco maior */
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
             font-weight: 700;
             text-transform: uppercase;
             color: #0ff;
-            margin: 1rem 0;
+            margin: 2rem 0;
             line-height: 1.1;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
             animation: neonPulse 2s ease-in-out infinite alternate;
@@ -112,10 +102,10 @@
         /* Container de Botões */
         .button-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Botões um pouco maiores */
-            gap: 1.5rem; /* Espaçamento maior */
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
             max-width: 800px;
-            margin: 2rem auto; /* Margem ajustada */
+            margin: 3rem auto;
             padding: 0 1rem;
         }
 
@@ -124,14 +114,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem 1.5rem; /* Padding maior */
+            padding: 1.2rem 1.5rem;
             border: 2px solid #0ff;
             border-radius: 8px;
             background: rgba(0, 255, 255, 0.1);
             color: #0ff;
             text-decoration: none;
             font-weight: 600;
-            font-size: 1rem; /* Fonte um pouco maior */
+            font-size: 1.1rem;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
             position: relative;
@@ -164,17 +154,14 @@
             left: 100%;
         }
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .button-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .botao {
-                padding: 1rem;
-                font-size: 0.9rem;
-            }
-        } rgba(0, 255, 255, 0.4);
+        /* Imagem de Perfil */
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 3px solid #0ff;
+            margin: 2rem auto;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
             object-fit: cover;
             transition: transform 0.3s ease;
         }
