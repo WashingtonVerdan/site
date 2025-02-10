@@ -37,58 +37,59 @@
         }
 
         .led-banner {
-            background-color: #1a1a1a;
-            border: 4px solid #ffffff;
-            padding: 20px;
+            background-color: #ffffff;
+            border: 4px solid #f0f0f0;
+            padding: 25px;
             margin: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             overflow: hidden;
             position: relative;
-            min-height: 200px;
+            min-height: 250px;
         }
 
-        .scrolling-content {
-            display: inline-block;
-            white-space: nowrap;
-            animation: scroll 10s linear infinite;
+        .scrolling-wrapper {
+            display: flex;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
+            animation: scroll 40s linear infinite;
+            will-change: transform;
         }
 
         .book-cover {
-            height: 200px;
-            margin: 0 20px;
-            border: 2px solid #ffffff;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-            transition: transform 0.3s;
-            vertical-align: middle;
-        }
-
-        .book-cover:hover {
-            transform: scale(1.1);
+            height: 180px;
+            margin: 0 30px;
+            border: 2px solid #e0e0e0;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.4s ease;
+            flex-shrink: 0;
+            image-rendering: optimizeQuality;
+            filter: contrast(1.1);
+            object-fit: cover;
+            width: 120px;
         }
 
         .slogan {
-            color: #001f3f;
-            font-family: 'Arial Black', sans-serif;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            color: #2c3e50;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 2.8em;
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 2;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 10px;
-            white-space: nowrap;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: 2px solid #f0f0f0;
+            text-align: center;
+            backdrop-filter: blur(2px);
         }
 
         @keyframes scroll {
-            0% { transform: translateX(100%) translateY(-50%); }
-            100% { transform: translateX(-100%) translateY(-50%); }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .led-banner::before {
@@ -98,10 +99,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(0deg, 
-                transparent 70%, 
-                rgba(255, 255, 255, 0.1) 50%);
-            background-size: 100% 4px;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 2px,
+                transparent 2px,
+                transparent 4px
+            );
             pointer-events: none;
             z-index: 1;
         }
@@ -184,11 +188,6 @@
             cursor: not-allowed;
         }
 
-        .zoom-controls {
-            text-align: center;
-            margin-top: 10px;
-        }
-
         footer {
             background-color: var(--primary-color);
             color: var(--text-color);
@@ -231,18 +230,15 @@
                 padding: 10px;
             }
             
-            header h1 {
-                font-size: 1.5rem;
-            }
-            
             .book-cover {
-                height: 120px;
-                margin: 0 10px;
+                height: 140px;
+                margin: 0 20px;
+                width: 90px;
             }
             
             .slogan {
-                font-size: 1.8em;
-                padding: 8px 15px;
+                font-size: 2em;
+                padding: 10px 20px;
             }
             
             .container {
@@ -253,12 +249,13 @@
 
         @media (max-width: 480px) {
             .slogan {
-                font-size: 1.2em;
+                font-size: 1.5em;
             }
             
-            .ebook-list select, .ebook-list button {
-                font-size: 0.9rem;
-                padding: 10px;
+            .book-cover {
+                height: 120px;
+                margin: 0 15px;
+                width: 80px;
             }
         }
     </style>
@@ -270,14 +267,8 @@
     </header>
 
     <div class="led-banner">
-        <div class="scrolling-content">
-            <img src="viverderenda.jpg" class="book-cover" alt="Livro 1">
-            <img src="capa2.jpg" class="book-cover" alt="Livro 2">
-            <img src="capa3.jpg" class="book-cover" alt="Livro 3">
-            <img src="capa4.jpg" class="book-cover" alt="Livro 4">
-            <img src="capa5.jpg" class="book-cover" alt="Livro 5">
-            <!-- Duplicação para efeito contínuo -->
-            <img src="viverderenda.jpg" class="book-cover" alt="Livro 1">
+        <div class="scrolling-wrapper" id="scrollingWrapper">
+            <img src="viverderenda.jpg" class="book-cover" alt="viverderenda">
             <img src="capa2.jpg" class="book-cover" alt="Livro 2">
             <img src="capa3.jpg" class="book-cover" alt="Livro 3">
             <img src="capa4.jpg" class="book-cover" alt="Livro 4">
@@ -323,6 +314,26 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
     <script>
+        // Configuração do Banner
+        const initBanner = () => {
+            const wrapper = document.getElementById('scrollingWrapper');
+            const originalContent = wrapper.innerHTML;
+            wrapper.innerHTML = originalContent + originalContent;
+            
+            const totalWidth = wrapper.scrollWidth / 2;
+            const bannerWidth = document.querySelector('.led-banner').offsetWidth;
+            const duration = (totalWidth / bannerWidth) * 25;
+
+            wrapper.style.animationDuration = `${duration}s`;
+
+            wrapper.addEventListener('animationiteration', () => {
+                wrapper.style.animation = 'none';
+                void wrapper.offsetWidth;
+                wrapper.style.animation = `scroll ${duration}s linear infinite`;
+            });
+        };
+
+        // Configuração do PDF Viewer
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
 
         let pdfDoc = null;
@@ -335,24 +346,24 @@
         const nextButton = document.getElementById('next-page');
         const pageInfo = document.getElementById('page-info');
 
-        function updatePageControls() {
+        const updatePageControls = () => {
             prevButton.disabled = currentPage <= 1;
             nextButton.disabled = currentPage >= pdfDoc.numPages;
             pageInfo.textContent = `Página ${currentPage} de ${pdfDoc.numPages}`;
-        }
+        };
 
-        async function renderPage(pageNum) {
+        const renderPage = async (pageNum) => {
             try {
                 loading.style.display = 'block';
                 const page = await pdfDoc.getPage(pageNum);
-                const viewport = page.getViewport({ scale: scale });
+                const viewport = page.getViewport({ scale });
 
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
 
                 await page.render({ 
                     canvasContext: ctx, 
-                    viewport: viewport 
+                    viewport 
                 }).promise;
 
                 currentPage = pageNum;
@@ -362,7 +373,7 @@
             } finally {
                 loading.style.display = 'none';
             }
-        }
+        };
 
         document.getElementById('load-ebook').addEventListener('click', async () => {
             try {
@@ -378,13 +389,11 @@
             }
         });
 
-        prevButton.addEventListener('click', () => {
-            if (currentPage > 1) renderPage(currentPage - 1);
-        });
+        prevButton.addEventListener('click', () => currentPage > 1 && renderPage(currentPage - 1));
+        nextButton.addEventListener('click', () => currentPage < pdfDoc.numPages && renderPage(currentPage + 1));
 
-        nextButton.addEventListener('click', () => {
-            if (currentPage < pdfDoc.numPages) renderPage(currentPage + 1);
-        });
+        // Inicialização
+        window.addEventListener('DOMContentLoaded', initBanner);
     </script>
 </body>
 </html>
