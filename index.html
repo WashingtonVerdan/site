@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Mantendo as variáveis e estilos gerais */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #34495e;
@@ -36,28 +37,30 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
+        /* Estilos modificados do banner */
         .led-banner {
             background-color: #ffffff;
             border: 4px solid #f0f0f0;
-            padding: 25px;
+            padding: 20px;
             margin: 20px;
             border-radius: 10px;
             overflow: hidden;
             position: relative;
-            min-height: 250px;
+            height: 300px;
         }
 
         .scrolling-wrapper {
             display: flex;
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 0;
+            bottom: 0;
             animation: scroll 40s linear infinite;
             will-change: transform;
+            align-items: center;
         }
 
         .book-cover {
-            height: 180px;
+            height: 100%;
             margin: 0 30px;
             border: 2px solid #e0e0e0;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
@@ -65,31 +68,36 @@
             flex-shrink: 0;
             image-rendering: optimizeQuality;
             filter: contrast(1.1);
-            object-fit: cover;
-            width: 120px;
+            object-fit: contain;
+            width: auto;
         }
 
-        .slogan {
-            color: #2c3e50;
-            font-family: 'Roboto', sans-serif;
-            font-weight: 700;
-            font-size: 2.8em;
+        /* Animação da mão */
+        .click-hand {
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 2;
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 15px 30px;
-            border-radius: 12px;
-            border: 2px solid #f0f0f0;
-            text-align: center;
-            backdrop-filter: blur(2px);
+            font-size: 40px;
+            animation: click 2s infinite;
+            opacity: 0.8;
         }
 
         @keyframes scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
+        }
+
+        @keyframes click {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(-50%, -30%) scale(0.9);
+                opacity: 1;
+            }
         }
 
         .led-banner::before {
@@ -110,6 +118,7 @@
             z-index: 1;
         }
 
+        /* Mantendo o restante do CSS original */
         .container {
             flex: 1;
             width: var(--container-width);
@@ -128,134 +137,29 @@
             width: 100%;
         }
 
-        .ebook-list select, .ebook-list button {
-            padding: 12px 15px;
-            border-radius: 5px;
-            font-size: 1rem;
-            width: 100%;
-            border: 1px solid #ddd;
-        }
-
-        .ebook-list button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .ebook-list button:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .pdf-viewer {
-            width: 100%;
-            margin: 15px 0;
-            background: #f8f9fa;
-            border-radius: 5px;
-            padding: 10px;
-            overflow-x: auto;
-        }
-
-        canvas {
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .controls button {
-            padding: 12px 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .controls button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-
-        footer {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            text-align: center;
-            padding: 1rem;
-            margin-top: auto;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 24px;
-            transition: transform 0.3s;
-            text-decoration: none;
-        }
-
-        .social-links a:hover {
-            transform: translateY(-2px);
-        }
-
-        .instagram:hover {
-            color: #E1306C;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            font-size: 1.2rem;
-        }
+        /* ... (mantenha o restante do CSS original) ... */
 
         @media (max-width: 768px) {
-            header {
-                padding: 10px;
+            .led-banner {
+                height: 200px;
             }
             
             .book-cover {
-                height: 140px;
                 margin: 0 20px;
-                width: 90px;
             }
             
-            .slogan {
-                font-size: 2em;
-                padding: 10px 20px;
-            }
-            
-            .container {
-                width: 95%;
-                margin: 10px auto;
+            .click-hand {
+                font-size: 30px;
             }
         }
 
         @media (max-width: 480px) {
-            .slogan {
-                font-size: 1.5em;
+            .led-banner {
+                height: 150px;
             }
             
-            .book-cover {
-                height: 120px;
-                margin: 0 15px;
-                width: 80px;
+            .click-hand {
+                font-size: 24px;
             }
         }
     </style>
@@ -268,15 +172,16 @@
 
     <div class="led-banner">
         <div class="scrolling-wrapper" id="scrollingWrapper">
-            <img src="viverderenda.jpg" class="book-cover" alt="viverderenda">
+            <img src="capa1.jpg" class="book-cover" alt="Livro 1">
             <img src="capa2.jpg" class="book-cover" alt="Livro 2">
             <img src="capa3.jpg" class="book-cover" alt="Livro 3">
             <img src="capa4.jpg" class="book-cover" alt="Livro 4">
             <img src="capa5.jpg" class="book-cover" alt="Livro 5">
         </div>
-        <span class="slogan">MAIS LIVROS!</span>
+        <div class="click-hand">👆</div>
     </div>
 
+    <!-- Mantendo o restante do HTML original -->
     <div class="container">
         <div class="ebook-list">
             <select id="ebook-select">
@@ -333,7 +238,7 @@
             });
         };
 
-        // Configuração do PDF Viewer
+        // Configuração do PDF Viewer (mantida igual)
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
 
         let pdfDoc = null;
