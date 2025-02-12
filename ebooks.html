@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBooks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 1.5rem;
+            font-size: 1.5rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .ebook-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .ebook {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .ebook img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .ebook h3 {
+            margin: 10px 0;
+        }
+        .access-button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .access-button:hover {
+            background-color: #34495e;
+        }
+        .code-input {
+            margin-top: 20px;
+        }
+        .code-input input {
+            padding: 10px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .code-input button {
+            padding: 10px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>eBooks Disponíveis</h1>
+</header>
+
+<div class="container">
+    <h3>Assine e tenha acesso ilimitado a todos os eBooks!</h3>
+    <p>Por apenas <strong>R$ 19,90</strong>, você pode ler todos os eBooks disponíveis.</p>
+    <button class="access-button" onclick="assinarLeitura()">Assinar Leitura</button>
+</div>
+
+<div class="container code-input">
+    <h3>Já assinou? Insira seu código para acessar os eBooks:</h3>
+    <input type="text" id="codigo" placeholder="Digite seu código">
+    <button onclick="validarCodigo()">Liberar Leitura</button>
+</div>
+
+<div class="container">
+    <div class="ebook-list">
+        <div class="ebook">
+            <img src="hermetismo.jpg" alt="Hermetismo">
+            <h3>Hermetismo</h3>
+            <p>Descubra os princípios herméticos e como aplicá-los na vida.</p>
+        </div>
+        <div class="ebook">
+            <img src="sucesso.jpg" alt="A Busca Pelo Sucesso">
+            <h3>A Busca Pelo Sucesso</h3>
+            <p>Um guia prático para alcançar seus objetivos financeiros e pessoais.</p>
+        </div>
+        <div class="ebook">
+            <img src="renda.jpg" alt="Viver de Renda">
+            <h3>Viver de Renda</h3>
+            <p>Aprenda a construir sua independência financeira.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Washington Verdan. Todos os direitos reservados.
+</footer>
+
+<script>
+    function assinarLeitura() {
+        alert("Para assinar e acessar todos os eBooks, envie R$ 19,90 via Pix para a chave: SEU_PIX_AQUI e informe seu WhatsApp para receber o código de liberação.");
+    }
+
+    function validarCodigo() {
+        const codigo = document.getElementById("codigo").value;
+        const codigosValidos = ["ABC123", "XYZ789", "QWE456"]; // Exemplo de códigos
+
+        if (codigosValidos.includes(codigo)) {
+            alert("Código válido! Seu acesso foi liberado.");
+            window.location.href = "ler_ebooks.html"; // Página onde os eBooks podem ser lidos
+        } else {
+            alert("Código inválido. Verifique e tente novamente.");
+        }
+    }
+</script>
+
+</body>
+</html>
