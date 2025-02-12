@@ -157,8 +157,8 @@
 
     function gerarAssinatura() {
         const codigo = gerarCodigo();
-        const codigos = JSON.parse(localStorage.getItem('codigosValidos') || '[]');
-        
+        let codigos = JSON.parse(localStorage.getItem('codigosValidos') || '[]');
+
         if (!codigos.includes(codigo)) {
             codigos.push(codigo);
             localStorage.setItem('codigosValidos', JSON.stringify(codigos));
@@ -171,13 +171,13 @@
                         `Código de Ativação: ${codigo}`;
 
         exibirAlerta(`Sua assinatura foi gerada! Anote seu código: <strong>${codigo}</strong>`, 'success');
-        alert(mensagem);
+        console.log(mensagem);
     }
 
     function validarCodigo() {
         const input = document.getElementById('codigo');
         const codigo = input.value.toUpperCase();
-        const codigos = JSON.parse(localStorage.getItem('codigosValidos') || [];
+        const codigos = JSON.parse(localStorage.getItem('codigosValidos') || '[]');
         const alert = document.getElementById('alert');
 
         if (codigos.includes(codigo)) {
