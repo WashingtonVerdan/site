@@ -41,7 +41,7 @@
             background-color: #219a52;
             transform: translateY(-2px);
         }
-        .qr-container {
+        .qr-container, #form-cadastro {
             display: none;
             margin-top: 20px;
         }
@@ -64,6 +64,14 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -81,6 +89,14 @@
 <div class="container qr-container" id="qr-container">
     <h3>Escaneie o QR Code para pagar:</h3>
     <img id="qr-code" src="" alt="QR Code PIX">
+</div>
+
+<div class="container" id="form-cadastro">
+    <h3>Cadastro de Usuário</h3>
+    <p>Preencha os dados para ativar sua assinatura.</p>
+    <input type="text" id="nome" placeholder="Seu Nome" required>
+    <input type="email" id="email" placeholder="Seu Email" required>
+    <button class="access-button" onclick="finalizarCadastro()">Finalizar Cadastro</button>
 </div>
 
 <div class="container">
@@ -114,6 +130,8 @@
             document.getElementById("qr-code").src = data.point_of_interaction.transaction_data.qr_code_base64;
             document.getElementById("qr-container").style.display = "block";
             verificarPagamento(data.id);
+        } else {
+            exibirAlerta("Erro ao gerar pagamento. Tente novamente.", "error");
         }
     }
 
@@ -133,6 +151,9 @@
             if (status === "approved") {
                 gerarCodigo();
                 exibirAlerta("Pagamento aprovado! Código gerado com sucesso.", "success");
+
+                // Exibir formulário de cadastro
+                document.getElementById("form-cadastro").style.display = "block";
                 break;
             }
         }
@@ -150,6 +171,23 @@
         localStorage.setItem("codigosValidos", JSON.stringify(codigos));
 
         exibirAlerta(`Seu código de acesso: <strong>${codigo}</strong>`, "success");
+    }
+
+    function finalizarCadastro() {
+        const nome = document.getElementById("nome").value;
+        const email = document.getElementById("email").value;
+
+        if (!nome || !email) {
+            exibirAlerta("Preencha todos os campos!", "error");
+            return;
+        }
+
+        localStorage.setItem("usuarioPremium", JSON.stringify({ nome, email }));
+
+        exibirAlerta("Cadastro concluído! Agora você pode acessar os eBooks.", "success");
+
+        // Esconder o formulário após o cadastro
+        document.getElementById("form-cadastro").style.display = "none";
     }
 
     function exibirAlerta(mensagem, tipo) {
