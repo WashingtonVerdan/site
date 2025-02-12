@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assinar Serviço</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos compartilhados */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #27ae60;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .pix-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .subscribe-btn {
+            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-top: 15px;
+        }
+
+        .subscribe-btn:hover {
+            background-color: #219a52;
+            transform: scale(1.05);
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-container">
+    <h2>🔐 Assinar Acesso Premium</h2>
+    
+    <form id="signup-form" onsubmit="return false">
+        <input type="text" placeholder="Nome completo" required>
+        <input type="email" placeholder="E-mail" required>
+        <input type="tel" placeholder="WhatsApp" required>
+
+        <div class="pix-box">
+            <h3>Pagamento via PIX</h3>
+            <p style="font-size: 1.5rem; color: var(--accent-color); margin: 15px 0;">R$ 9,90</p>
+            <p>Chave PIX (CPF): 123.456.789-00</p>
+            <img src="qrcode-pix.png" alt="QR Code PIX" width="200" style="margin: 20px 0;">
+            <p>Ou copie a chave PIX:</p>
+            <input type="text" value="123.456.789-00" readonly style="text-align: center;">
+        </div>
+
+        <a href="https://wa.me/5527997566512?text=Olá,%20envio%20o%20comprovante%20da%20assinatura%20eBook" 
+           class="subscribe-btn whatsapp-btn"
+           target="_blank">
+            <i class="fab fa-whatsapp"></i>
+            Enviar Comprovante pelo WhatsApp
+        </a>
+    </form>
+
+    <p style="margin-top: 20px; color: #666; font-size: 0.9rem;">
+        Após o pagamento e verificação do comprovante, seu acesso será liberado em até 24 horas.
+    </p>
+</div>
+
+<script>
+    // Simulação de confirmação de pagamento
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has('confirmed')) {
+        localStorage.setItem('assinaturaAtiva', 'true');
+        alert('Assinatura ativada com sucesso!');
+        window.location.href = 'index.html';
+    }
+</script>
+
+</body>
+</html>
