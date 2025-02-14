@@ -28,11 +28,16 @@ header {
 }
 
 .video-container {
-    width: var(--container-width);
-    margin: 10px auto;
-    border-radius: 8px;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.video-container video {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
 .container {
