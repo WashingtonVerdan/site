@@ -1,98 +1,108 @@
-        /* Imagem de Perfil */
-        .profile-image {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 3px solid #0ff;
-            margin: 2rem auto;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #2E7D32;
+    --text-color: #333;
+    --bg-color: #F5F5F5;
+}
 
-        .profile-image:hover {
-            transform: scale(1.05);
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .button-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .botao {
-                padding: 1rem;
-                font-size: 1rem;
-            }
-        }
+header {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
 
-<style>
-    .led-banner {
-        background-color: #1a1a1a;
-        border: 4px solid #333;
-        padding: 20px;
-        margin: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-        overflow: hidden;
-        position: relative;
-    }
+main {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px 0;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-    .scrolling-content {
-        display: flex;
-        animation: scroll 30s linear infinite;
-        white-space: nowrap;
-    }
+.ebook-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
 
-    .book-cover {
-        height: 150px;
-        margin: 0 20px;
-        border: 2px solid #00ff00;
-        box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
-        transition: transform 0.3s;
-    }
+label {
+    font-weight: bold;
+}
 
-    .book-cover:hover {
-        transform: scale(1.1);
-    }
+select, button {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
 
-    .slogan {
-        color: #00ff00;
-        font-family: 'Courier New', monospace;
-        font-size: 2em;
-        text-shadow: 0 0 10px #00ff00;
-        margin-left: 30px;
-        display: inline-block;
-    }
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
-    @keyframes scroll {
-        from { transform: translateX(100%); }
-        to { transform: translateX(-100%); }
-    }
+button:hover {
+    background-color: var(--secondary-color);
+}
 
-    /* Efeito de LED */
-    .led-banner::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(0deg, 
-            transparent 50%, 
-            rgba(0, 255, 0, 0.1) 50%);
-        background-size: 100% 4px;
-        pointer-events: none;
-    }
-</style>
+.pdf-viewer {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+}
 
-<div class="led-banner">
-    <div class="scrolling-content">
-        <img src="viverderenda.jpg" class="book-cover" alt="Viver de renda">
-        <img src="viverderenda_20250209_190502_0000.jpg" class="book-cover" alt="Abusca pelo sucesso">
-        <img src="capa3.jpg" class="book-cover" alt="Livro 3">
-        <span class="slogan">MAIS LIVROS! MAIS HISTÓRIAS! MAIS AVENTURAS!</span>
-        <img src="capa4.jpg" class="book-cover" alt="Livro 4">
-        <img src="capa5.jpg" class="book-cover" alt="Livro 5">
-    </div>
-</div>
+canvas {
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.controls button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+footer {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    margin-top: auto;
+}
