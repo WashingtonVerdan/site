@@ -3,348 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ler eBooks</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #27ae60;
-            --text-color: #ecf0f1;
-            --container-width: min(1200px, 95%);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 1.5rem 1rem;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .subscribe-btn {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            padding: 12px 25px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .subscribe-btn:hover {
-            background-color: #219a52;
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .video-container {
-            width: var(--container-width);
-            margin: 10px auto;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .video-banner {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 16/9;
-            display: block;
-        }
-
-        .container {
-            flex: 1;
-            width: var(--container-width);
-            margin: 20px auto;
-            padding: 15px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .restricted {
-            filter: blur(5px);
-            pointer-events: none;
-        }
-
-        .ebook-list {
-            margin: 15px 0;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            width: 100%;
-        }
-
-        .ebook-list select, .ebook-list button {
-            padding: 12px 15px;
-            border-radius: 5px;
-            font-size: 1rem;
-            width: 100%;
-            border: 1px solid #ddd;
-        }
-
-        .ebook-list button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .ebook-list button:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .pdf-viewer {
-            width: 100%;
-            margin: 15px 0;
-            background: #f8f9fa;
-            border-radius: 5px;
-            padding: 10px;
-            overflow-x: auto;
-        }
-
-        canvas {
-            max-width: 100%;
-            height: auto;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .controls button {
-            padding: 12px 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .controls button:disabled {
-            background-color: #95a5a6;
-            cursor: not-allowed;
-        }
-
-        footer {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            text-align: center;
-            padding: 1rem;
-            margin-top: auto;
-        }
-
-        .subscription-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .subscription-box {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 500px;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            font-size: 1.2rem;
-        }
-
-        @media (max-width: 768px) {
-            .subscribe-btn {
-                position: static;
-                transform: none;
-                margin-top: 15px;
-                width: calc(100% - 40px);
-                justify-content: center;
-            }
-        }
-    </style>
+    <title>Ler eBooks Online</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
 </head>
 <body>
 
-<header>
-    <h1>Ler eBooks 📖</h1>
-    <h3>A sua leitura diária</h3>
-    <button class="subscribe-btn" onclick="window.location.href='signup.html'">
-        <i class="fas fa-crown"></i>
-        Assinar Leitura
-    </button>
-</header>
+    <header>
+        <h1>Ler eBooks Online</h1>
+        <p>Explore seu conhecimento sem sair do site</p>
+    </header>
 
-<div class="video-container">
-    <a href="https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD" target="_blank">
-        <video class="video-banner" autoplay muted loop playsinline>
-            <source src="anuncio.mp4" type="video/mp4">
-            Seu navegador não suporta vídeos HTML5.
-        </video>
-    </a>
-</div>
+    <main>
+        <section class="ebook-section">
+            <label for="ebook-select">Escolha um eBook:</label>
+            <select id="ebook-select">
+                <option value="ebooks/hermetismo3.pdf">Hermetismo</option>
+                <option value="ebooks/abuscapelosucesso.pdf">A Busca Pelo Sucesso</option>
+                <option value="ebooks/viverderenda.pdf">Viver de Renda</option>
+                <option value="ebooks/omaiorinvestimento.pdf">O Maior Investimento</option>
+                <option value="ebooks/realidadeabstrata.pdf">Realidade Abstrata</option>
+            </select>
+            <button id="load-ebook">Ler Agora</button>
+        </section>
 
-<div class="container">
-    <div class="ebook-list">
-        <select id="ebook-select">
-            <option value="hermetismo3.pdf">Hermetismo</option>
-            <option value="abuscapelosucesso.pdf">A Busca Pelo Sucesso</option>
-            <option value="viverderenda.pdf">Viver de Renda</option>
-            <option value="omaiorinvestimento.pdf">O Maior Investimento</option>
-            <option value="realidadeabstrata.pdf">Realidade Abstrata</option>
-        </select>
-        <button id="load-ebook">Ler Agora</button>
-    </div>
+        <div class="loading" id="loading">Carregando...</div>
 
-    <div class="loading" id="loading">Carregando...</div>
+        <div class="pdf-viewer">
+            <canvas id="pdf-canvas"></canvas>
+        </div>
 
-    <div class="pdf-viewer">
-        <canvas id="pdf-canvas"></canvas>
-    </div>
+        <div class="controls">
+            <button id="prev-page" disabled>Anterior</button>
+            <span id="page-info">Página 1 de 1</span>
+            <button id="next-page" disabled>Próxima</button>
+        </div>
+    </main>
 
-    <div class="controls">
-        <button id="prev-page" disabled>Anterior</button>
-        <span id="page-info">Página 1 de 1</span>
-        <button id="next-page" disabled>Próxima</button>
-    </div>
-</div>
+    <footer>
+        <p>&copy; 2025 Ler eBooks. Todos os direitos reservados.</p>
+    </footer>
 
-<div class="subscription-overlay">
-    <div class="subscription-box">
-        <h2>Assine para continuar</h2>
-        <p>Desbloqueie acesso ilimitado por apenas R$9,90/mês</p>
-        <button class="subscribe-btn" onclick="window.location.href='signup.html'">
-            <i class="fas fa-lock-open"></i>
-            Desbloquear Acesso
-        </button>
-    </div>
-</div>
-
-<footer>
-    <div class="social-links">
-        <a href="https://www.instagram.com/washingtonverdan/" target="_blank" class="instagram">
-            <i class="fab fa-instagram"></i>
-        </a>       
-    </div>
-    <p>&copy; 2025 Ler eBooks. Todos os direitos reservados.</p>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
-<script>
-    // Configuração do PDF.js
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
-    let pdfDoc = null, currentPage = 1, scale = 1.5;
-    const canvas = document.getElementById('pdf-canvas');
-    const ctx = canvas.getContext('2d');
-
-    // Verificar assinatura
-    document.addEventListener('DOMContentLoaded', () => {
-        if(!localStorage.getItem('assinaturaAtiva')) {
-            document.querySelector('.container').classList.add('restricted');
-            document.querySelector('.subscription-overlay').style.display = 'flex';
-        }
-    });
-
-    // Renderizar página do PDF
-    async function renderPage(pageNum) {
-        const page = await pdfDoc.getPage(pageNum);
-        const viewport = page.getViewport({ scale });
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        document.getElementById('page-info').textContent = `Página ${pageNum} de ${pdfDoc.numPages}`;
-    }
-
-    // Carregar eBook
-    document.getElementById('load-ebook').addEventListener('click', async () => {
-        if(!localStorage.getItem('assinaturaAtiva')) {
-            alert('Por favor, assine nosso serviço para acessar os ebooks!');
-            return;
-        }
-
-        const selectedEbook = document.getElementById('ebook-select').value;
-        document.getElementById('loading').style.display = 'block';
-        
-        try {
-            pdfDoc = await pdfjsLib.getDocument(selectedEbook).promise;
-            currentPage = 1;
-            await renderPage(currentPage);
-            document.getElementById('prev-page').disabled = true;
-            document.getElementById('next-page').disabled = pdfDoc.numPages <= 1;
-        } catch (error) {
-            alert('Erro ao carregar o eBook');
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
-    });
-
-    // Controles de navegação
-    document.getElementById('next-page').addEventListener('click', async () => {
-        if(currentPage < pdfDoc.numPages) {
-            currentPage++;
-            await renderPage(currentPage);
-            document.getElementById('prev-page').disabled = false;
-            if(currentPage === pdfDoc.numPages) {
-                document.getElementById('next-page').disabled = true;
-            }
-        }
-    });
-
-    document.getElementById('prev-page').addEventListener('click', async () => {
-        if(currentPage > 1) {
-            currentPage--;
-            await renderPage(currentPage);
-            document.getElementById('next-page').disabled = false;
-            if(currentPage === 1) {
-                document.getElementById('prev-page').disabled = true;
-            }
-        }
-    });
-</script>
-
+    <script src="script.js"></script>
 </body>
-    </html>
+</html>
