@@ -1,6 +1,6 @@
 async function buscarAcao() {
     const ticker = document.getElementById('ticker').value.toUpperCase();
-    const apiKey = 'SUA_CHAVE_ALPHA_VANTAGE'; // Obtenha em https://www.alphavantage.co
+    const apiKey = '6GWR0GD7YZ5BLYSI'; // Obtenha em https://www.alphavantage.co
     const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${apiKey}`;
 
     try {
