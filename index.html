@@ -1,30 +1,122 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Washington Verdan - eBooks</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Conversor Texto para Voz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .controls {
+            margin: 15px 0;
+        }
+
+        label {
+            margin-right: 15px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Meus eBooks</h1>
-        <nav>
-            <a href="index.html">Início</a>
-            <a href="comprar.html">Comprar</a>
-            <a href="login.html">Acessar</a>
-        </nav>
-    </header>
+    <div class="container">
+        <h1>Conversor de Texto para Voz</h1>
+        
+        <textarea id="textInput" placeholder="Digite ou cole seu texto aqui..."></textarea>
+        
+        <div class="controls">
+            <label>
+                Idioma:
+                <select id="language">
+                    <option value="en-us">Inglês (EUA)</option>
+                    <option value="pt-br">Português (BR)</option>
+                    <option value="es-es">Espanhol</option>
+                    <option value="fr-fr">Francês</option>
+                </select>
+            </label>
+        </div>
 
-    <main>
-        <section class="ebooks">
-            <div class="ebook">
-                <h2>Nome do eBook</h2>
-                <p>Descrição breve do eBooks.</p>
-                <a href="comprar.html">Comprar</a>
-            </div>
-            <!-- Adicione mais eBooks conforme necessário -->
-        </section>
-    </main>
+        <button onclick="convertTextToSpeech()">Converter para Voz</button>
+        <audio id="audioPlayer" controls hidden></audio>
+    </div>
+
+    <script>
+        // Insira sua chave de API do VoiceRSS aqui
+        const API_KEY = 'd627747d8df64e91b41279687abe42cf';
+
+        function convertTextToSpeech() {
+            const text = document.getElementById('textInput').value;
+            const language = document.getElementById('language').value;
+            
+            if (!text) {
+                alert('Por favor, digite algum texto!');
+                return;
+            }
+
+            // Desabilita o botão durante o processamento
+            const button = document.querySelector('button');
+            button.disabled = true;
+            button.innerHTML = 'Processando...';
+
+            // Configuração da API
+            const audioElement = document.getElementById('audioPlayer');
+            const apiUrl = `https://api.voicerss.org/?key=${API_KEY}&hl=${language}&src=${encodeURIComponent(text)}`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Erro na requisição');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const audioUrl = URL.createObjectURL(blob);
+                    audioElement.src = audioUrl;
+                    audioElement.hidden = false;
+                    audioElement.play();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    alert('Ocorreu um erro ao converter o texto!');
+                })
+                .finally(() => {
+                    button.disabled = false;
+                    button.innerHTML = 'Converter para Voz';
+                });
+        }
+    </script>
 </body>
 </html>
