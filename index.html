@@ -1,122 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversor Texto para Voz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        textarea {
-            width: 100%;
-            height: 150px;
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            resize: vertical;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .controls {
-            margin: 15px 0;
-        }
-
-        label {
-            margin-right: 15px;
-        }
-    </style>
+    <title>LivroMentor - Recomendações Literárias</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>Conversor de Texto para Voz</h1>
-        
-        <textarea id="textInput" placeholder="Digite ou cole seu texto aqui..."></textarea>
-        
-        <div class="controls">
-            <label>
-                Idioma:
-                <select id="language">
-                    <option value="en-us">Inglês (EUA)</option>
-                    <option value="pt-br">Português (BR)</option>
-                    <option value="es-es">Espanhol</option>
-                    <option value="fr-fr">Francês</option>
-                </select>
-            </label>
-        </div>
-
-        <button onclick="convertTextToSpeech()">Converter para Voz</button>
-        <audio id="audioPlayer" controls hidden></audio>
+        <header>
+            <h1>📚 LivroMentor</h1>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Ex: Fantasia, Machado de Assis, Drama...">
+                <button id="search-btn">Buscar</button>
+            </div>
+            <div class="quick-genres">
+                <button class="genre-btn" data-genre="fantasia">Fantasia</button>
+                <button class="genre-btn" data-genre="ficção científica">Ficção Científica</button>
+                <button class="genre-btn" data-genre="clássicos">Clássicos</button>
+            </div>
+        </header>
+        <div id="results" class="book-grid"></div>
     </div>
-
-    <script>
-        // Insira sua chave de API do VoiceRSS aqui
-        const API_KEY = '5cb9cc89116141c3bf389a9954a53031';
-
-        function convertTextToSpeech() {
-            const text = document.getElementById('textInput').value;
-            const language = document.getElementById('language').value;
-            
-            if (!text) {
-                alert('Por favor, digite algum texto!');
-                return;
-            }
-
-            // Desabilita o botão durante o processamento
-            const button = document.querySelector('button');
-            button.disabled = true;
-            button.innerHTML = 'Processando...';
-
-            // Configuração da API
-            const audioElement = document.getElementById('audioPlayer');
-            const apiUrl = `https://api.voicerss.org/?key=${API_KEY}&hl=${language}&src=${encodeURIComponent(text)}`;
-
-            fetch(apiUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('Erro na requisição');
-                    return response.blob();
-                })
-                .then(blob => {
-                    const audioUrl = URL.createObjectURL(blob);
-                    audioElement.src = audioUrl;
-                    audioElement.hidden = false;
-                    audioElement.play();
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    alert('Ocorreu um erro ao converter o texto!');
-                })
-                .finally(() => {
-                    button.disabled = false;
-                    button.innerHTML = 'Converter para Voz';
-                });
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
