@@ -2,26 +2,14 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LivroMentor - Recomendações Literárias</title>
+    <title>BookFinder+ - Encontre seu próximo livro</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📚 LivroMentor</h1>
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Ex: Fantasia, Machado de Assis, Drama...">
-                <button id="search-btn">Buscar</button>
-            </div>
-            <div class="quick-genres">
-                <button class="genre-btn" data-genre="fantasia">Fantasia</button>
-                <button class="genre-btn" data-genre="ficção científica">Ficção Científica</button>
-                <button class="genre-btn" data-genre="clássicos">Clássicos</button>
-            </div>
-        </header>
-        <div id="results" class="book-grid"></div>
+        <h1>📖 BookFinder+</h1>
+        <input type="text" id="search" placeholder="Procure por título, autor ou assunto...">
+        <div id="results"></div>
     </div>
     <script src="script.js"></script>
 </body>
