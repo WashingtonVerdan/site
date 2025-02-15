@@ -1,97 +1,48 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Georgia', serif;
-}
-
 body {
-    background: #f5eee6;
-    color: #3d2c29;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-}
-
-header {
+    font-family: Arial, sans-serif;
     text-align: center;
-    margin-bottom: 30px;
-}
-
-h1 {
-    color: #2a4d69;
-    margin-bottom: 20px;
-    font-size: 2.5em;
-}
-
-.search-container {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-input {
-    width: 400px;
-    padding: 15px;
-    border: 2px solid #c5b9a2;
-    border-radius: 30px;
-    font-size: 1.1em;
-}
-
-button {
-    padding: 15px 30px;
-    border: none;
-    border-radius: 30px;
-    background: #2a4d69;
-    color: white;
-    cursor: pointer;
+    background-color: #f4f4f4;
+    color: #333;
     transition: 0.3s;
 }
-
-button:hover {
-    background: #1a3d5d;
-}
-
-.quick-genres {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.book-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 25px;
-    padding: 20px;
-}
-
-.book-card {
+.container {
+    margin: 50px auto;
+    width: 80%;
+    max-width: 600px;
     background: white;
-    border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.book-cover {
-    width: 100%;
-    height: 400px;
-    object-fit: cover;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    margin-bottom: 15px;
 }
-
-.book-info h3 {
-    color: #2a4d69;
-    margin-bottom: 10px;
+h1 {
+    font-size: 24px;
 }
-
-.loading {
-    text-align: center;
-    font-size: 1.2em;
-    color: #2a4d69;
+p {
+    font-size: 20px;
+    font-style: italic;
+    margin: 20px 0;
+}
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+button {
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+button:hover {
+    background: #0056b3;
+}
+.dark-mode {
+    background-color: #222;
+    color: white;
+}
+.dark-mode .container {
+    background: #333;
 }
