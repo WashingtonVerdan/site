@@ -1,48 +1,26 @@
-const apiURL = "https://bible-api.com/proverbs 3:5"; // Pode mudar para outro versículo
+async function buscarAcao() {
+    const ticker = document.getElementById('ticker').value.toUpperCase();
+    const apiKey = 'SUA_CHAVE_ALPHA_VANTAGE'; // Obtenha em https://www.alphavantage.co
+    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${apiKey}`;
 
-function getQuote() {
-    fetch(apiURL)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("quote").textContent = data.text;
-        })
-        .catch(() => {
-            document.getElementById("quote").textContent = "Erro ao carregar provérbio.";
-        });
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data['Global Quote']) {
+            const acao = data['Global Quote'];
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = `
+                <h2>${ticker}</h2>
+                <p>Preço: $${acao['05. price']}</p>
+                <p>Variação (%): ${acao['10. change percent']}</p>
+                <p>Abertura: $${acao['02. open']}</p>
+                <p>Máxima do Dia: $${acao['03. high']}</p>
+            `;
+        } else {
+            document.getElementById('resultado').innerHTML = "Ticker não encontrado!";
+        }
+    } catch (error) {
+        document.getElementById('resultado').innerHTML = "Erro na requisição.";
+    }
 }
-
-// Funções de fala, compartilhamento e tema continuam iguais
-
-
-const apiURL = "https://api.quotable.io/random";
-
-function getQuote() {
-    fetch(apiURL)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("quote").textContent = data.content;
-        })
-        .catch(() => {
-            document.getElementById("quote").textContent = "Erro ao carregar a frase.";
-        });
-}
-
-function speakQuote() {
-    let text = document.getElementById("quote").textContent;
-    let speech = new SpeechSynthesisUtterance(text);
-    speech.lang = "pt-BR";
-    window.speechSynthesis.speak(speech);
-}
-
-function shareWhatsApp() {
-    let text = document.getElementById("quote").textContent;
-    let url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
-}
-
-function toggleTheme() {
-    document.body.classList.toggle("dark-mode");
-}
-
-// Carrega uma frase ao iniciar
-getQuote();
