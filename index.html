@@ -2,14 +2,20 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>BookFinder+ - Encontre seu próximo livro</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provérbios e Frases</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>📖 BookFinder+</h1>
-        <input type="text" id="search" placeholder="Procure por título, autor ou assunto...">
-        <div id="results"></div>
+        <h1>Provérbios e Frases Motivacionais</h1>
+        <p id="quote">Carregando...</p>
+        <div class="buttons">
+            <button onclick="getQuote()">🔄 Nova Frase</button>
+            <button onclick="speakQuote()">🔊 Ouvir</button>
+            <button onclick="shareWhatsApp()">📱 Compartilhar</button>
+            <button onclick="toggleTheme()">🌙 Modo Escuro</button>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
