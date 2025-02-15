@@ -1,3 +1,19 @@
+const apiURL = "https://bible-api.com/proverbs 3:5"; // Pode mudar para outro versículo
+
+function getQuote() {
+    fetch(apiURL)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("quote").textContent = data.text;
+        })
+        .catch(() => {
+            document.getElementById("quote").textContent = "Erro ao carregar provérbio.";
+        });
+}
+
+// Funções de fala, compartilhamento e tema continuam iguais
+
+
 const apiURL = "https://api.quotable.io/random";
 
 function getQuote() {
