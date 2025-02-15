@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitura de eBooks</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Leitura Online</h1>
+        <nav>
+            <a href="index.html">Início</a>
+            <a href="comprar.html">Comprar</a>
+            <a href="login.html">Sair</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Escolha um eBook</h2>
+        <select id="ebookSelect">
+            <option value="">Selecione...</option>
+            <option value="ebooks/ebook1.pdf">eBook 1</option>
+            <option value="ebooks/ebook2.pdf">eBook 2</option>
+        </select>
+
+        <iframe id="ebookViewer" style="width: 100%; height: 600px; border: none; display: none;"></iframe>
+    </main>
+
+    <script>
+        document.getElementById("ebookSelect").addEventListener("change", function() {
+            var viewer = document.getElementById("ebookViewer");
+            if (this.value) {
+                viewer.src = this.value;
+                viewer.style.display = "block";
+            } else {
+                viewer.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
