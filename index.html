@@ -2,17 +2,14 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Ações Brasileiras - Alpha Vantage</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dados de Ações - Fundamentus</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Consulta de Ações B3</h1>
-        <div class="search-box">
-            <input type="text" id="ticker" placeholder="Ex: PETR3.SA, VALE3.SA..." />
-            <button onclick="buscarAcao()">Buscar</button>
-        </div>
+        <h1>Consultar Ações B3</h1>
+        <input type="text" id="ticker" placeholder="Ex: PETR3, VALE3">
+        <button onclick="buscarDados()">Buscar</button>
         <div id="resultado"></div>
     </div>
     <script src="script.js"></script>
