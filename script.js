@@ -1,34 +1,62 @@
-async function buscarDados() {
-    const ticker = document.getElementById('ticker').value.toUpperCase();
-    const resultado = document.getElementById('resultado');
-    resultado.innerHTML = '<p>Carregando...</p>';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.worker.min.js';
 
-    // Usar proxy para contornar CORS (exemplo: cors-anywhere)
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const url = `${proxyUrl}https://www.fundamentus.com.br/detalhes.php?papel=${ticker}`;
+let pdfDoc = null;
+let currentPage = 1;
+let scale = 1.5;
+const canvas = document.getElementById('pdf-canvas');
+const ctx = canvas.getContext('2d');
+const loading = document.getElementById('loading');
+const prevButton = document.getElementById('prev-page');
+const nextButton = document.getElementById('next-page');
+const pageInfo = document.getElementById('page-info');
 
+function updatePageControls() {
+    prevButton.disabled = currentPage <= 1;
+    nextButton.disabled = currentPage >= pdfDoc.numPages;
+    pageInfo.textContent = `Página ${currentPage} de ${pdfDoc.numPages}`;
+}
+
+async function renderPage(pageNum) {
     try {
-        const response = await fetch(url, {
-            headers: { 'Origin': 'https://www.fundamentus.com.br' } // Simula origem válida
-        });
-        const html = await response.text();
-        
-        // Converter HTML para DOM
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
+        loading.style.display = 'block';
+        const page = await pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({ scale: scale });
 
-        // Extrair dados
-        const preco = doc.querySelector('.data.valor').textContent.trim();
-        const pl = doc.querySelector('td:contains("P/L") + td').textContent.trim();
-        const dy = doc.querySelector('td:contains("Div. Yield") + td').textContent.trim();
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
 
-        resultado.innerHTML = `
-            <h2>${ticker}</h2>
-            <p>Preço: R$ ${preco}</p>
-            <p>P/L: ${pl}</p>
-            <p>Dividend Yield: ${dy}</p>
-        `;
+        await page.render({ 
+            canvasContext: ctx, 
+            viewport: viewport 
+        }).promise;
+
+        currentPage = pageNum;
+        updatePageControls();
     } catch (error) {
-        resultado.innerHTML = 'Erro ao buscar dados. Tente outro ticker.';
+        console.error('Erro ao renderizar página:', error);
+    } finally {
+        loading.style.display = 'none';
     }
 }
+
+document.getElementById('load-ebook').addEventListener('click', async () => {
+    try {
+        const ebook = document.getElementById('ebook-select').value;
+        loading.style.display = 'block';
+        pdfDoc = await pdfjsLib.getDocument(ebook).promise;
+        await renderPage(1);
+    } catch (error) {
+        console.error('Erro ao carregar eBook:', error);
+        alert('Erro ao carregar eBook. Verifique o console para detalhes.');
+    } finally {
+        loading.style.display = 'none';
+    }
+});
+
+prevButton.addEventListener('click', () => {
+    if (currentPage > 1) renderPage(currentPage - 1);
+});
+
+nextButton.addEventListener('click', () => {
+    if (currentPage < pdfDoc.numPages) renderPage(currentPage + 1);
+});
