@@ -1,38 +1,22 @@
-body {
-    font-family: Arial, sans-serif;
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --text-color: #ecf0f1;
+    --container-width: min(1200px, 95%);
+}
+
+* {
+    box-sizing: border-box;
     margin: 0;
-    padding: 20px;
-    background: #f0f2f5;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f4;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
 }
 
-.container {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    max-width: 600px;
-    width: 100%;
-}
-
-input, button {
-    padding: 10px;
-    margin: 5px;
-    font-size: 16px;
-}
-
-button {
-    background: #1a73e8;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#resultado {
-    margin-top: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 5px;
-}
+/* ... (mantenha todo o restante do CSS original aqui) ... */
