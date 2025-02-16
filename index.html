@@ -1,17 +1,69 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Dados de Ações - Fundamentus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ler Ebooks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Consultar Ações B3</h1>
-        <input type="text" id="ticker" placeholder="Ex: PETR3, VALE3">
-        <button onclick="buscarDados()">Buscar</button>
-        <div id="resultado"></div>
+
+<header class="main-banner">
+    <div class="banner-content">
+        <h1 class="site-title">Ler eBooks<span class="book-icon">📚</span></h1>
+        <p class="site-subtitle">Sua jornada literária diária</p>
     </div>
-    <script src="script.js"></script>
+</header>
+
+<div class="video-container">
+    <a href="https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD" target="_blank">
+        <video class="video-banner" autoplay muted loop playsinline>
+            <source src="anuncio.mp4" type="video/mp4">
+            Seu navegador não suporta vídeos HTML5.
+        </video>
+    </a>
+</div>
+
+<div class="container">
+    <div class="ebook-list">
+        <select id="ebook-select">
+            <option value="hermetismo3.pdf">Hermetismo</option>
+            <option value="abuscapelosucesso.pdf">A Busca Pelo Sucesso</option>
+            <option value="viverderenda.pdf">Viver de Renda</option>
+            <option value="opesodaverdade.pdf">O Peso da Verdade</option>
+            <option value="omaiorinvestimento.pdf">O Maior Investimento</option>
+            <option value="realidadeabstrata.pdf">Realidade Abstrata</option>
+        </select>
+        <button id="load-ebook">Ler Agora</button>
+    </div>
+
+    <div class="loading" id="loading">
+        Carregando...
+    </div>
+
+    <div class="pdf-viewer">
+        <canvas id="pdf-canvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <button id="prev-page" disabled>Anterior</button>
+        <span id="page-info">Página 1 de 1</span>
+        <button id="next-page" disabled>Próxima</button>
+    </div>
+</div>
+
+<footer>
+    <div class="social-links">
+        <a href="https://www.instagram.com/washingtonverdan/" target="_blank" class="instagram">
+            <i class="fab fa-instagram"></i>
+        </a>       
+    </div>
+    <p>&copy; 2025 Ler eBooks. Todos os direitos reservados.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
