@@ -1,67 +1,34 @@
-async function buscarAcao() {
-  const ticker = document.getElementById('ticker').value.toUpperCase();
-  const apiKey = 'async function buscarAcao() {
-  const ticker = document.getElementById('ticker').value.toUpperCase();
-  const apiKey = 'GN6UE66Q3O66L6DE';
-  const urlGlobalQuote = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${apiKey}`;
-  const urlFundamentos = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${ticker}&apikey=${apiKey}`;
+async function buscarDados() {
+    const ticker = document.getElementById('ticker').value.toUpperCase();
+    const resultado = document.getElementById('resultado');
+    resultado.innerHTML = '<p>Carregando...</p>';
 
-  try {
-    const [resQuote, resFundamentos] = await Promise.all([fetch(urlGlobalQuote), fetch(urlFundamentos)]);
-    const dataQuote = await resQuote.json();
-    const dataFundamentos = await resFundamentos.json();
+    // Usar proxy para contornar CORS (exemplo: cors-anywhere)
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const url = `${proxyUrl}https://www.fundamentus.com.br/detalhes.php?papel=${ticker}`;
 
-    const acao = dataQuote['Global Quote'];
-    const html = `
-      <h2>${ticker}</h2>
-      <div class="dados">
-        <h3>Cotação</h3>
-        <p>Preço: R$ ${acao['05. price']}</p>
-        <p>Variação: ${acao['09. change']} (${acao['10. change percent']})</p>
-        <p>Abertura/Máxima/Mínima: R$ ${acao['02. open']} / ${acao['03. high']} / ${acao['04. low']}</p>
-        <p>Volume: ${formatarVolume(acao['06. volume'])}</p>
-      </div>
-      <div class="dados">
-        <h3>Fundamentos</h3>
-        <p>P/L: ${dataFundamentos.PERatio || 'N/A'}</p>
-        <p>Dividend Yield: ${dataFundamentos.DividendYield || 'N/A'}</p>
-        <p>EBITDA: ${dataFundamentos.EBITDA || 'N/A'}</p>
-      </div>
-    `;
-    document.getElementById('resultado').innerHTML = html;
+    try {
+        const response = await fetch(url, {
+            headers: { 'Origin': 'https://www.fundamentus.com.br' } // Simula origem válida
+        });
+        const html = await response.text();
+        
+        // Converter HTML para DOM
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
 
-  } catch (error) {
-    document.getElementById('resultado').innerHTML = "Erro na requisição.";
-  }
-}';
-  const urlGlobalQuote = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker}&apikey=${apiKey}`;
-  const urlFundamentos = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${ticker}&apikey=${apiKey}`;
+        // Extrair dados
+        const preco = doc.querySelector('.data.valor').textContent.trim();
+        const pl = doc.querySelector('td:contains("P/L") + td').textContent.trim();
+        const dy = doc.querySelector('td:contains("Div. Yield") + td').textContent.trim();
 
-  try {
-    const [resQuote, resFundamentos] = await Promise.all([fetch(urlGlobalQuote), fetch(urlFundamentos)]);
-    const dataQuote = await resQuote.json();
-    const dataFundamentos = await resFundamentos.json();
-
-    const acao = dataQuote['Global Quote'];
-    const html = `
-      <h2>${ticker}</h2>
-      <div class="dados">
-        <h3>Cotação</h3>
-        <p>Preço: R$ ${acao['05. price']}</p>
-        <p>Variação: ${acao['09. change']} (${acao['10. change percent']})</p>
-        <p>Abertura/Máxima/Mínima: R$ ${acao['02. open']} / ${acao['03. high']} / ${acao['04. low']}</p>
-        <p>Volume: ${formatarVolume(acao['06. volume'])}</p>
-      </div>
-      <div class="dados">
-        <h3>Fundamentos</h3>
-        <p>P/L: ${dataFundamentos.PERatio || 'N/A'}</p>
-        <p>Dividend Yield: ${dataFundamentos.DividendYield || 'N/A'}</p>
-        <p>EBITDA: ${dataFundamentos.EBITDA || 'N/A'}</p>
-      </div>
-    `;
-    document.getElementById('resultado').innerHTML = html;
-
-  } catch (error) {
-    document.getElementById('resultado').innerHTML = "Erro na requisição.";
-  }
+        resultado.innerHTML = `
+            <h2>${ticker}</h2>
+            <p>Preço: R$ ${preco}</p>
+            <p>P/L: ${pl}</p>
+            <p>Dividend Yield: ${dy}</p>
+        `;
+    } catch (error) {
+        resultado.innerHTML = 'Erro ao buscar dados. Tente outro ticker.';
+    }
 }
