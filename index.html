@@ -1,69 +1,167 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ler Ebooks</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="style.css">
+    <title>Biblioteca Holográfica - EBooks Futuristas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(45deg, #0a0a2e, #1a1a4f);
+            color: #00f3ff;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        #hologram-container {
+            position: relative;
+            height: 100vh;
+            perspective: 1000px;
+        }
+
+        .hologram-book {
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.5));
+        }
+
+        .hologram-book:hover {
+            transform: translateZ(50px) rotateY(15deg);
+            filter: drop-shadow(0 0 25px #00f3ff);
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .control-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 50, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .neuro-button {
+            background: #001f3f;
+            border: 2px solid #00f3ff;
+            color: #00f3ff;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .neuro-button:hover {
+            background: #00f3ff;
+            color: #001f3f;
+            box-shadow: 0 0 15px #00f3ff;
+        }
+
+        #reader-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background: rgba(0, 15, 30, 0.95);
+            border: 2px solid #00f3ff;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+    </style>
 </head>
 <body>
-
-<header class="main-banner">
-    <div class="banner-content">
-        <h1 class="site-title">Ler eBooks<span class="book-icon">📚</span></h1>
-        <p class="site-subtitle">Sua jornada literária diária</p>
+    <canvas id="particle-canvas"></canvas>
+    <div id="hologram-container"></div>
+    <div class="control-panel">
+        <button class="neuro-button" onclick="organizeBooks('category')">Organizar</button>
+        <button class="neuro-button" onclick="searchBooks()">Buscar</button>
+        <button class="neuro-button" onclick="showReader()">Leitor</button>
     </div>
-</header>
-
-<div class="video-container">
-    <a href="https://www.amazon.com.br/stores/Washington-Verdan/author/B09PVND4HD" target="_blank">
-        <video class="video-banner" autoplay muted loop playsinline>
-            <source src="anuncio.mp4" type="video/mp4">
-            Seu navegador não suporta vídeos HTML5.
-        </video>
-    </a>
-</div>
-
-<div class="container">
-    <div class="ebook-list">
-        <select id="ebook-select">
-            <option value="hermetismo3.pdf">Hermetismo</option>
-            <option value="abuscapelosucesso.pdf">A Busca Pelo Sucesso</option>
-            <option value="viverderenda.pdf">Viver de Renda</option>
-            <option value="livros/opesodaverdade-1.pdf">O Peso da Verdade</option>
-            <option value="omaiorinvestimento.pdf">O Maior Investimento</option>
-            <option value="realidadeabstrata.pdf">Realidade Abstrata</option>
-        </select>
-        <button id="load-ebook">Ler Agora</button>
+    <div id="reader-modal">
+        <iframe id="pdf-viewer" width="100%" height="100%"></iframe>
     </div>
 
-    <div class="loading" id="loading">
-        Carregando...
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Configuração das Partículas
+        particlesJS('particle-canvas', {
+            particles: {
+                number: { value: 200 },
+                color: { value: '#00f3ff' },
+                opacity: { value: 0.5 },
+                size: { value: 2 },
+                move: { enable: true, speed: 1 }
+            }
+        });
 
-    <div class="pdf-viewer">
-        <canvas id="pdf-canvas"></canvas>
-    </div>
+        // Configuração 3D
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('hologram-container').appendChild(renderer.domElement);
 
-    <div class="controls">
-        <button id="prev-page" disabled>Anterior</button>
-        <span id="page-info">Página 1 de 1</span>
-        <button id="next-page" disabled>Próxima</button>
-    </div>
-</div>
+        // Modelagem dos Livros
+        const books = [
+            { title: "Meu eBook 1", category: "Tecnologia", pdf: "ebook1.pdf", cover: "cover1.jpg" },
+            { title: "Meu eBook 2", category: "Ficção", pdf: "ebook2.pdf", cover: "cover2.jpg" }
+        ];
 
-<footer>
-    <div class="social-links">
-        <a href="https://www.instagram.com/washingtonverdan/" target="_blank" class="instagram">
-            <i class="fab fa-instagram"></i>
-        </a>       
-    </div>
-    <p>&copy; 2025 Ler eBooks. Todos os direitos reservados.</p>
-</footer>
+        function createBook(bookData) {
+            const geometry = new THREE.BoxGeometry(5, 7, 0.5);
+            const texture = new THREE.TextureLoader().load(bookData.cover);
+            const material = new THREE.MeshPhongMaterial({
+                map: texture,
+                emissive: 0x00ffff,
+                emissiveIntensity: 0.3
+            });
+            const book = new THREE.Mesh(geometry, material);
+            return book;
+        }
 
+        // Posicionamento dos Livros
+        function organizeBooks(method) {
+            books.forEach((book, index) => {
+                const book3D = createBook(book);
+                book3D.position.x = (index - books.length/2) * 6;
+                scene.add(book3D);
+            });
+        }
 
-<script src="script.js"></script>
+        // Animação
+        camera.position.z = 15;
+        function animate() {
+            requestAnimationFrame(animate);
+            scene.children.forEach((book, index) => {
+                book.rotation.y += 0.01;
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Controles Interativos
+        function showReader(pdf) {
+            document.getElementById('reader-modal').style.display = 'block';
+            document.getElementById('pdf-viewer').src = pdf;
+        }
+    </script>
 </body>
 </html>
