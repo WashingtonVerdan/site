@@ -2,76 +2,50 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca Holográfica - EBooks Futuristas</title>
+    <title>Biblioteca Holográfica</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            background: linear-gradient(45deg, #0a0a2e, #1a1a4f);
-            color: #00f3ff;
-            font-family: 'Courier New', monospace;
+            margin: 0;
+            background: #000;
             overflow: hidden;
+            font-family: Arial, sans-serif;
         }
 
-        #hologram-container {
+        #bookShelf {
             position: relative;
             height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             perspective: 1000px;
         }
 
-        .hologram-book {
+        .book {
+            width: 200px;
+            height: 300px;
             position: absolute;
             transform-style: preserve-3d;
-            transition: all 0.5s ease;
+            transition: all 0.5s;
             cursor: pointer;
-            filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.5));
-        }
-
-        .hologram-book:hover {
-            transform: translateZ(50px) rotateY(15deg);
-            filter: drop-shadow(0 0 25px #00f3ff);
-        }
-
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-        }
-
-        .control-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 50, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-        }
-
-        .neuro-button {
-            background: #001f3f;
+            background: linear-gradient(45deg, #001f3f, #003366);
             border: 2px solid #00f3ff;
-            color: #00f3ff;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
         }
 
-        .neuro-button:hover {
-            background: #00f3ff;
-            color: #001f3f;
-            box-shadow: 0 0 15px #00f3ff;
+        .book:hover {
+            transform: rotateY(15deg) translateZ(50px);
+            box-shadow: 0 0 40px #00f3ff;
         }
 
-        #reader-modal {
+        .glow {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+        }
+
+        #pdfViewer {
             display: none;
             position: fixed;
             top: 50%;
@@ -79,89 +53,79 @@
             transform: translate(-50%, -50%);
             width: 80%;
             height: 80%;
-            background: rgba(0, 15, 30, 0.95);
             border: 2px solid #00f3ff;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
+            background: #000;
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
-    <canvas id="particle-canvas"></canvas>
-    <div id="hologram-container"></div>
-    <div class="control-panel">
-        <button class="neuro-button" onclick="organizeBooks('category')">Organizar</button>
-        <button class="neuro-button" onclick="searchBooks()">Buscar</button>
-        <button class="neuro-button" onclick="showReader()">Leitor</button>
-    </div>
-    <div id="reader-modal">
-        <iframe id="pdf-viewer" width="100%" height="100%"></iframe>
-    </div>
+    <div class="glow"></div>
+    <div id="bookShelf"></div>
+    <iframe id="pdfViewer"></iframe>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
-        // Configuração das Partículas
-        particlesJS('particle-canvas', {
-            particles: {
-                number: { value: 200 },
-                color: { value: '#00f3ff' },
-                opacity: { value: 0.5 },
-                size: { value: 2 },
-                move: { enable: true, speed: 1 }
-            }
-        });
-
-        // Configuração 3D
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('hologram-container').appendChild(renderer.domElement);
-
-        // Modelagem dos Livros
-        const books = [
-            { title: "hermetismo", category: "Espiritual", pdf: "hermetismo.pdf", cover: "hermetismo.jpg" },
-            { title: "opesodaverdade", category: "Auto ajuda", pdf: "opesodaverdade.pdf", cover: "cover2.jpg" }
+        // Dados dos eBooks
+        const ebooks = [
+            { title: "Hermetismo", file: "hermetismo.pdf", color: "#00f3ff" },
+            { title: "Ficção Científica", file: "ebook2.pdf", color: "#ff00ff" },
+            { title: "Aprendendo AI", file: "ebook3.pdf", color: "#00ff00" }
         ];
 
-        function createBook(bookData) {
-            const geometry = new THREE.BoxGeometry(5, 7, 0.5);
-            const texture = new THREE.TextureLoader().load(bookData.cover);
-            const material = new THREE.MeshPhongMaterial({
-                map: texture,
-                emissive: 0x00ffff,
-                emissiveIntensity: 0.3
+        // Criar prateleira de livros
+        function createBookshelf() {
+            const shelf = document.getElementById('bookShelf');
+            const angle = 360 / ebooks.length;
+
+            ebooks.forEach((ebook, index) => {
+                const book = document.createElement('div');
+                book.className = 'book';
+                book.innerHTML = `
+                    <div style="position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px; border: 1px solid ${ebook.color}; padding: 15px;">
+                        <h3 style="color: ${ebook.color}; text-shadow: 0 0 10px ${ebook.color};">${ebook.title}</h3>
+                    </div>
+                `;
+
+                // Posicionamento circular
+                const radius = Math.min(window.innerWidth, window.innerHeight) * 0.4;
+                const posX = Math.cos((index * angle * Math.PI) / 180) * radius;
+                const posZ = Math.sin((index * angle * Math.PI) / 180) * radius;
+
+                book.style.transform = `translateX(${posX}px) translateZ(${posZ}px)`;
+                book.onclick = () => showPDF(ebook.file);
+                
+                shelf.appendChild(book);
             });
-            const book = new THREE.Mesh(geometry, material);
-            return book;
         }
 
-        // Posicionamento dos Livros
-        function organizeBooks(method) {
-            books.forEach((book, index) => {
-                const book3D = createBook(book);
-                book3D.position.x = (index - books.length/2) * 6;
-                scene.add(book3D);
-            });
+        // Visualizador de PDF
+        function showPDF(filename) {
+            const viewer = document.getElementById('pdfViewer');
+            viewer.style.display = 'block';
+            viewer.src = filename;
         }
 
-        // Animação
-        camera.position.z = 15;
-        function animate() {
-            requestAnimationFrame(animate);
-            scene.children.forEach((book, index) => {
-                book.rotation.y += 0.01;
-            });
-            renderer.render(scene, camera);
+        // Fechar visualizador ao clicar fora
+        window.onclick = (event) => {
+            if (event.target === document.getElementById('pdfViewer')) {
+                event.target.style.display = 'none';
+            }
         }
-        animate();
 
-        // Controles Interativos
-        function showReader(pdf) {
-            document.getElementById('reader-modal').style.display = 'block';
-            document.getElementById('pdf-viewer').src = pdf;
-        }
+        // Inicialização
+        window.onload = createBookshelf;
+        window.onresize = createBookshelf;
+
+        // Efeito de movimento paralaxe
+        document.addEventListener('mousemove', (e) => {
+            const books = document.getElementsByClassName('book');
+            const x = (e.clientX - window.innerWidth/2) * 0.1;
+            const y = (e.clientY - window.innerHeight/2) * 0.1;
+            
+            Array.from(books).forEach(book => {
+                book.style.transform += ` rotateX(${y}deg) rotateY(${-x}deg)`;
+            });
+        });
     </script>
 </body>
 </html>
