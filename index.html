@@ -2,16 +2,17 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Gestor de Investimentos Profissional</title>
+    <title>Sistema Profissional de Gestão de Investimentos</title>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/technicalindicators"></script>
     <style>
         :root {
             --primary: #1a1d28;
             --secondary: #2962ff;
-            --success: #00c853;
-            --danger: #d50000;
+            --success: #00C853;
+            --danger: #D50000;
+            --warning: #FFAB00;
             --background: #f8f9fc;
         }
 
@@ -23,11 +24,11 @@
         }
 
         .dashboard {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
             padding: 2rem;
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 2rem;
         }
 
@@ -39,10 +40,17 @@
             margin-bottom: 2rem;
         }
 
-        .portfolio-summary {
+        .risk-metrics {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .metric {
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--background);
         }
 
         table {
@@ -57,68 +65,18 @@
             border-bottom: 1px solid #eee;
         }
 
-        th {
-            background: var(--background);
-            font-weight: 600;
+        .chart-container {
+            height: 400px;
+            margin: 2rem 0;
         }
 
-        .price-up { color: var(--success); }
-        .price-down { color: var(--danger); }
-
-        input, select, button {
-            width: 100%;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        button:hover { opacity: 0.9; }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
+        .price-real-time {
+            display: flex;
             align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .progress-bar {
-            height: 20px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 0.5rem 0;
-        }
-
-        .progress {
-            height: 100%;
-            transition: width 0.3s;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; padding: 1rem; }
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            background: var(--background);
         }
     </style>
 </head>
@@ -126,52 +84,58 @@
     <div class="dashboard">
         <div>
             <div class="card">
-                <h2>Nova Transação</h2>
+                <h2>Operações</h2>
                 <form id="transactionForm">
                     <select id="type" required>
                         <option value="COMPRA">Compra</option>
                         <option value="VENDA">Venda</option>
                     </select>
-                    
-                    <input type="text" id="ticker" placeholder="Ticker (ex: PETR4)" required>
-                    
+                    <input type="text" id="ticker" placeholder="Ticker" required>
                     <input type="number" id="quantity" placeholder="Quantidade" required>
-                    
                     <input type="number" id="price" placeholder="Preço" step="0.01" required>
-                    
-                    <button type="submit">Registrar</button>
+                    <button type="submit">Executar</button>
                 </form>
             </div>
 
             <div class="card">
                 <h2>Alocação de Ativos</h2>
-                <div id="allocationStatus"></div>
-                <button onclick="showAllocationModal()">Configurar Alocação</button>
+                <div id="allocationChart" class="chart-container"></div>
+            </div>
+
+            <div class="card">
+                <h2>Gestão de Riscos</h2>
+                <div class="risk-metrics">
+                    <div class="metric" id="volatility">
+                        <div>Volatilidade</div>
+                        <div class="value">-</div>
+                    </div>
+                    <div class="metric" id="sharpe">
+                        <div>Sharpe Ratio</div>
+                        <div class="value">-</div>
+                    </div>
+                    <div class="metric" id="var">
+                        <div>VaR 95%</div>
+                        <div class="value">-</div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div>
             <div class="card">
                 <h2>Carteira</h2>
-                <div class="portfolio-summary">
-                    <div>
-                        <h3>Valor Total</h3>
-                        <div id="totalValue">R$ 0,00</div>
-                    </div>
-                    <div>
-                        <h3>Resultado</h3>
-                        <div id="profitLoss">+0.00% (R$ 0,00)</div>
-                    </div>
+                <div class="price-real-time">
+                    <span id="refreshTime"></span>
+                    <button onclick="portfolioManager.update()">Atualizar</button>
                 </div>
-                
                 <table>
                     <thead>
                         <tr>
                             <th>Ativo</th>
-                            <th>Quantidade</th>
+                            <th>Quant.</th>
                             <th>Preço Médio</th>
                             <th>Valor Atual</th>
-                            <th>Alocação</th>
+                            <th>Variação</th>
                         </tr>
                     </thead>
                     <tbody id="portfolioBody"></tbody>
@@ -179,38 +143,113 @@
             </div>
 
             <div class="card">
-                <div id="chart"></div>
+                <div id="performanceChart" class="chart-container"></div>
             </div>
         </div>
     </div>
 
-    <div id="allocationModal" class="modal">
-        <div class="modal-content">
-            <h3>Configurar Alocação</h3>
-            <div id="assetClassConfig"></div>
-            <button onclick="saveAllocation()">Salvar</button>
-            <button onclick="closeModal()">Cancelar</button>
-        </div>
-    </div>
-
     <script>
-        const API_KEY = 'e8Qqv7GXSqriatWqAbgNHL'; // Obtenha em brapi.dev
+        const API_KEY = 'e8Qqv7GXSqriatWqAbgNHL';
         const DateTime = luxon.DateTime;
-        let portfolio = {};
-        let allocation = JSON.parse(localStorage.getItem('allocation')) || {
-            classes: { 'Ações': 60, 'FIIs': 30, 'Renda Fixa': 10 },
-            assets: { 'PETR4': 50, 'VALE3': 50 }
-        };
+        let portfolioHistory = [];
 
-        class AssetManager {
-            static assetClasses = {
-                'PETR4': 'Ações',
-                'VALE3': 'Ações',
-                'MXRF11': 'FIIs',
-                'CDB': 'Renda Fixa'
-            };
+        class FinancialCalculator {
+            static calculateVolatility(prices) {
+                const returns = [];
+                for(let i = 1; i < prices.length; i++) {
+                    returns.push((prices[i] - prices[i-1]) / prices[i-1]);
+                }
+                const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
+                const variance = returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / returns.length;
+                return Math.sqrt(variance) * Math.sqrt(252);
+            }
 
-            static async getPrice(ticker) {
+            static calculateSharpe(prices, riskFreeRate = 0.12) {
+                const returns = [];
+                for(let i = 1; i < prices.length; i++) {
+                    returns.push((prices[i] - prices[i-1]) / prices[i-1]);
+                }
+                const meanReturn = returns.reduce((a, b) => a + b, 0) / returns.length;
+                const volatility = this.calculateVolatility(prices);
+                return (meanReturn - riskFreeRate/252) / volatility * Math.sqrt(252);
+            }
+
+            static calculateVaR(prices, confidence = 0.95) {
+                const returns = [];
+                for(let i = 1; i < prices.length; i++) {
+                    returns.push((prices[i] - prices[i-1]) / prices[i-1]);
+                }
+                returns.sort((a, b) => a - b);
+                const index = Math.floor(returns.length * (1 - confidence));
+                return returns[index] * 100;
+            }
+        }
+
+        class PortfolioManager {
+            constructor() {
+                this.transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+                this.initializeCharts();
+                this.update();
+            }
+
+            initializeCharts() {
+                this.performanceChart = new ApexCharts(document.querySelector("#performanceChart"), {
+                    chart: { type: 'area', height: '100%' },
+                    series: [{ name: 'Valor da Carteira', data: [] }],
+                    xaxis: { type: 'datetime' },
+                    yaxis: { labels: { formatter: v => `R$ ${v.toFixed(2)}` } },
+                    tooltip: { x: { formatter: v => DateTime.fromMillis(v).toFormat('dd/LL/yyyy') } }
+                });
+
+                this.allocationChart = new ApexCharts(document.querySelector("#allocationChart"), {
+                    chart: { type: 'pie', height: '100%' },
+                    series: [],
+                    labels: [],
+                    dataLabels: { enabled: false }
+                });
+
+                this.performanceChart.render();
+                this.allocationChart.render();
+            }
+
+            async update() {
+                const portfolio = this.calculatePortfolio();
+                await this.updatePrices(portfolio);
+                this.updateUI(portfolio);
+                this.updateCharts(portfolio);
+                this.updateRiskMetrics();
+                localStorage.setItem('transactions', JSON.stringify(this.transactions));
+                document.getElementById('refreshTime').textContent = 
+                    `Última atualização: ${DateTime.now().toFormat('HH:mm:ss')}`;
+            }
+
+            calculatePortfolio() {
+                const portfolio = {};
+                this.transactions.forEach(t => {
+                    const ticker = t.ticker.toUpperCase();
+                    portfolio[ticker] = portfolio[ticker] || { quantity: 0, cost: 0 };
+                    
+                    if(t.type === 'COMPRA') {
+                        portfolio[ticker].quantity += +t.quantity;
+                        portfolio[ticker].cost += t.quantity * t.price;
+                    } else {
+                        portfolio[ticker].quantity -= +t.quantity;
+                        portfolio[ticker].cost -= t.quantity * t.price;
+                    }
+                });
+                return portfolio;
+            }
+
+            async updatePrices(portfolio) {
+                for(const ticker in portfolio) {
+                    const price = await this.getCurrentPrice(ticker);
+                    portfolio[ticker].price = price;
+                    portfolio[ticker].value = portfolio[ticker].quantity * price;
+                    portfolio[ticker].avgPrice = portfolio[ticker].cost / portfolio[ticker].quantity;
+                }
+            }
+
+            async getCurrentPrice(ticker) {
                 try {
                     const response = await fetch(`https://brapi.dev/api/quote/${ticker}?token=${API_KEY}`);
                     const data = await response.json();
@@ -221,128 +260,64 @@
                 }
             }
 
-            static getAssetClass(ticker) {
-                return this.assetClasses[ticker] || 'Outros';
-            }
-        }
-
-        class PortfolioManager {
-            constructor() {
-                this.transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-                this.chart = new ApexCharts(document.querySelector("#chart"), this.getChartConfig());
-                this.chart.render();
-                this.update();
-            }
-
-            getChartConfig() {
-                return {
-                    series: [{ name: 'Valor', data: [] }],
-                    chart: { type: 'area', height: 350 },
-                    xaxis: { type: 'datetime' },
-                    yaxis: { labels: { formatter: v => `R$ ${v.toFixed(2)}` } },
-                    tooltip: { x: { formatter: v => DateTime.fromMillis(v).toFormat('dd/LL/yyyy') } }
-                };
-            }
-
-            async update() {
-                portfolio = {};
+            updateUI(portfolio) {
                 let totalValue = 0;
-
-                for (const t of this.transactions) {
-                    const ticker = t.ticker.toUpperCase();
-                    portfolio[ticker] = portfolio[ticker] || { quantity: 0, cost: 0 };
-
-                    if (t.type === 'COMPRA') {
-                        portfolio[ticker].quantity += +t.quantity;
-                        portfolio[ticker].cost += t.quantity * t.price;
-                    } else {
-                        portfolio[ticker].quantity -= +t.quantity;
-                        portfolio[ticker].cost -= t.quantity * t.price;
-                    }
-                }
-
-                await this.updatePrices();
-                this.updateUI();
-                this.updateChart();
-                localStorage.setItem('transactions', JSON.stringify(this.transactions));
-            }
-
-            async updatePrices() {
-                for (const ticker in portfolio) {
-                    portfolio[ticker].price = await AssetManager.getPrice(ticker);
-                    portfolio[ticker].value = portfolio[ticker].quantity * portfolio[ticker].price;
-                }
-            }
-
-            updateUI() {
-                const totalValue = Object.values(portfolio).reduce((acc, p) => acc + p.value, 0);
-                document.getElementById('totalValue').textContent = `R$ ${totalValue.toFixed(2)}`;
-
                 let portfolioHTML = '';
-                for (const [ticker, p] of Object.entries(portfolio)) {
-                    if (p.quantity <= 0) continue;
-                    
-                    const avgPrice = p.cost / p.quantity;
-                    const allocationPercent = (p.value / totalValue) * 100;
-                    const targetPercent = allocation.assets[ticker] || 0;
 
+                Object.entries(portfolio).forEach(([ticker, p]) => {
+                    if(p.quantity <= 0) return;
+                    
+                    totalValue += p.value;
+                    const variation = ((p.price - p.avgPrice) / p.avgPrice) * 100;
+                    
                     portfolioHTML += `
                         <tr>
                             <td>${ticker}</td>
-                            <td>${p.quantity}</td>
-                            <td>R$ ${avgPrice.toFixed(2)}</td>
+                            <td>${p.quantity.toLocaleString()}</td>
+                            <td>R$ ${p.avgPrice.toFixed(2)}</td>
                             <td>R$ ${p.value.toFixed(2)}</td>
-                            <td>
-                                <div class="progress-bar">
-                                    <div class="progress" style="width: ${allocationPercent}%;
-                                        background: ${allocationPercent > targetPercent ? 'var(--success)' : 'var(--danger)'}">
-                                    </div>
-                                </div>
-                                ${allocationPercent.toFixed(1)}% / ${targetPercent}%
+                            <td class="${variation >= 0 ? 'success' : 'danger'}">
+                                ${variation.toFixed(2)}%
                             </td>
                         </tr>
                     `;
-                }
+                });
+
                 document.getElementById('portfolioBody').innerHTML = portfolioHTML;
-                this.updateAllocationStatus();
             }
 
-            updateAllocationStatus() {
-                const classAllocation = {};
-                let totalValue = Object.values(portfolio).reduce((acc, p) => acc + p.value, 0);
+            updateCharts(portfolio) {
+                // Performance Chart
+                portfolioHistory.push({
+                    x: DateTime.now().toMillis(),
+                    y: Object.values(portfolio).reduce((acc, p) => acc + p.value, 0)
+                });
+                this.performanceChart.updateSeries([{ data: portfolioHistory }]);
 
-                for (const [ticker, p] of Object.entries(portfolio)) {
-                    const className = AssetManager.getAssetClass(ticker);
-                    classAllocation[className] = (classAllocation[className] || 0) + p.value;
+                // Allocation Chart
+                const allocationData = Object.entries(portfolio).map(([ticker, p]) => ({
+                    x: ticker,
+                    y: p.value
+                }));
+                this.allocationChart.updateOptions({
+                    series: allocationData.map(d => d.y),
+                    labels: allocationData.map(d => d.x)
+                });
+            }
+
+            updateRiskMetrics() {
+                const portfolioValues = portfolioHistory.map(p => p.y);
+                
+                if(portfolioValues.length > 1) {
+                    document.getElementById('volatility').querySelector('.value').textContent = 
+                        `${(FinancialCalculator.calculateVolatility(portfolioValues) * 100).toFixed(2)}%`;
+                    
+                    document.getElementById('sharpe').querySelector('.value').textContent = 
+                        FinancialCalculator.calculateSharpe(portfolioValues).toFixed(2);
+                    
+                    document.getElementById('var').querySelector('.value').textContent = 
+                        `${FinancialCalculator.calculateVaR(portfolioValues).toFixed(2)}%`;
                 }
-
-                let allocationHTML = '';
-                for (const [className, target] of Object.entries(allocation.classes)) {
-                    const current = ((classAllocation[className] || 0) / totalValue) * 100 || 0;
-                    allocationHTML += `
-                        <div class="allocation-group">
-                            <div>${className}</div>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: ${current}%;
-                                    background: ${current > target ? 'var(--success)' : 'var(--danger)'}">
-                                </div>
-                            </div>
-                            <div>${current.toFixed(1)}% / ${target}%</div>
-                        </div>
-                    `;
-                }
-                document.getElementById('allocationStatus').innerHTML = allocationHTML;
-            }
-
-            updateChart() {
-                const timestamp = DateTime.now().toMillis();
-                this.chart.updateSeries([{
-                    data: [...this.chart.w.globals.series[0].data, { x: timestamp, y: this.getTotalValue() }]
-                }]);
-            }
-
-            getTotalValue() {
-                return Object.values(portfolio).reduce((acc, p) => acc + p.value, 0);
             }
 
             addTransaction(transaction) {
@@ -354,7 +329,7 @@
         const portfolioManager = new PortfolioManager();
 
         // Event Handlers
-        document.getElementById('transactionForm').addEventListener('submit', async e => {
+        document.getElementById('transactionForm').addEventListener('submit', e => {
             e.preventDefault();
             const form = e.target;
             
@@ -370,51 +345,7 @@
             form.reset();
         });
 
-        function showAllocationModal() {
-            const modal = document.getElementById('allocationModal');
-            let html = '<h4>Classes de Ativos</h4>';
-            
-            // Classes
-            for (const [className, percent] of Object.entries(allocation.classes)) {
-                html += `
-                    <div class="input-group">
-                        <label>${className}</label>
-                        <input type="number" value="${percent}" 
-                            onchange="allocation.classes['${className}'] = parseFloat(this.value)">
-                    </div>
-                `;
-            }
-
-            // Ativos
-            html += '<h4 style="margin-top: 1rem;">Alocação por Ativo</h4>';
-            for (const [ticker, percent] of Object.entries(allocation.assets)) {
-                html += `
-                    <div class="input-group">
-                        <label>${ticker}</label>
-                        <input type="number" value="${percent}" 
-                            onchange="allocation.assets['${ticker}'] = parseFloat(this.value)">
-                    </div>
-                `;
-            }
-
-            document.getElementById('assetClassConfig').innerHTML = html;
-            modal.style.display = 'flex';
-        }
-
-        function saveAllocation() {
-            const classTotal = Object.values(allocation.classes).reduce((a, b) => a + b, 0);
-            if (classTotal !== 100) return alert('A soma das classes deve ser 100%');
-            
-            localStorage.setItem('allocation', JSON.stringify(allocation));
-            portfolioManager.updateAllocationStatus();
-            closeModal();
-        }
-
-        function closeModal() {
-            document.getElementById('allocationModal').style.display = 'none';
-        }
-
-        // Atualização automática de preços
+        // Atualização automática a cada 5 minutos
         setInterval(() => portfolioManager.update(), 300000);
     </script>
 </body>
