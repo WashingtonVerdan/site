@@ -17,14 +17,16 @@
     <h1>Gestão de Investimentos</h1><h2>Adicionar Ativo</h2>
 <form id="form-ativo">
     <input type="text" id="ticker" placeholder="Ticker (Ex: AAPL, PETR4)" required>
-    <input type="number" id="quantidade" placeholder="Quantidade" required>
-    <input type="number" id="preco-medio" placeholder="Preço Médio" required>
+    <input type="number" step="0.01" id="quantidade" placeholder="Quantidade" required>
+    <input type="number" step="0.01" id="preco-medio" placeholder="Preço Médio" required>
     <select id="categoria">
         <option value="Ações">Ações</option>
         <option value="FIIs">FIIs</option>
         <option value="Renda Fixa">Renda Fixa</option>
         <option value="Exterior">Exterior</option>
     </select>
+    <input type="number" step="0.01" id="percentual-categoria" placeholder="% desejado na categoria">
+    <input type="number" step="0.01" id="percentual-ativo" placeholder="% desejado no ativo">
     <button type="submit">Adicionar</button>
 </form>
 
@@ -38,6 +40,8 @@
             <th>Preço Médio</th>
             <th>Valor Atual</th>
             <th>Ganho/Perda</th>
+            <th>% na Categoria</th>
+            <th>% na Carteira</th>
         </tr>
     </thead>
     <tbody id="carteira"></tbody>
@@ -47,15 +51,29 @@
 
 <script>
     const carteira = [];
-    document.getElementById('form-ativo').addEventListener('submit', function(event) {
+    async function obterPrecoAtual(ticker) {
+        const url = `https://finance.google.com/finance?q=${ticker}&output=json`;
+        try {
+            const resposta = await fetch(url);
+            const dados = await resposta.json();
+            return parseFloat(dados.price);
+        } catch (error) {
+            console.error("Erro ao obter preço para", ticker);
+            return null;
+        }
+    }
+    document.getElementById('form-ativo').addEventListener('submit', async function(event) {
         event.preventDefault();
         const ticker = document.getElementById('ticker').value.toUpperCase();
-        const quantidade = parseInt(document.getElementById('quantidade').value);
+        const quantidade = parseFloat(document.getElementById('quantidade').value);
         const precoMedio = parseFloat(document.getElementById('preco-medio').value);
         const categoria = document.getElementById('categoria').value;
-        const precoAtual = precoMedio * (0.9 + Math.random() * 0.2); // Simulação
+        const percentualCategoria = parseFloat(document.getElementById('percentual-categoria').value) || 0;
+        const percentualAtivo = parseFloat(document.getElementById('percentual-ativo').value) || 0;
+        const precoAtual = await obterPrecoAtual(ticker);
+        if (!precoAtual) return;
         const ganhoPerda = ((precoAtual - precoMedio) * quantidade).toFixed(2);
-        carteira.push({ ticker, quantidade, precoMedio, precoAtual, ganhoPerda, categoria });
+        carteira.push({ ticker, quantidade, precoMedio, precoAtual, ganhoPerda, categoria, percentualCategoria, percentualAtivo });
         atualizarTabela();
         atualizarGrafico();
     });
@@ -70,6 +88,8 @@
                 <td>R$ ${ativo.precoMedio.toFixed(2)}</td>
                 <td>R$ ${ativo.precoAtual.toFixed(2)}</td>
                 <td style="color: ${ativo.ganhoPerda >= 0 ? 'green' : 'red'}">R$ ${ativo.ganhoPerda}</td>
+                <td>${ativo.percentualCategoria}%</td>
+                <td>${ativo.percentualAtivo}%</td>
             </tr>`;
         });
     }
