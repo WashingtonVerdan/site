@@ -1,366 +1,93 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Gestão Profissional de Carteira de Investimentos</title>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Investimentos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --rv-color: #2962ff;
-            --rf-color: #00C853;
-            --cash-color: #757575;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            background: #f5f5f5;
-        }
-
-        .dashboard {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-        }
-
-        .card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .asset-class-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .tab {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .active-tab {
-            background: var(--rv-color);
-            color: white;
-        }
-
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .metric {
-            padding: 1rem;
-            border-left: 4px solid;
-        }
-
-        .rf-metric { border-color: var(--rf-color); }
-        .rv-metric { border-color: var(--rv-color); }
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        input, button { margin: 5px; padding: 10px; }
+        canvas { max-width: 600px; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div>
-            <div class="card">
-                <h2>Adicionar Ativo</h2>
-                <div class="asset-class-tabs">
-                    <div class="tab active-tab" onclick="switchTab('rv')">Renda Variável</div>
-                    <div class="tab" onclick="switchTab('rf')">Renda Fixa</div>
-                </div>
-                
-                <form id="rvForm" class="asset-form">
-                    <input type="text" placeholder="Ticker (ex: PETR4)" required>
-                    <input type="number" placeholder="Quantidade" required>
-                    <input type="number" placeholder="Preço" step="0.01" required>
-                    <button type="submit">Adicionar Ação</button>
-                </form>
+    <h1>Gestão de Investimentos</h1><h2>Adicionar Ativo</h2>
+<form id="form-ativo">
+    <input type="text" id="ticker" placeholder="Ticker (Ex: AAPL, PETR4)" required>
+    <input type="number" id="quantidade" placeholder="Quantidade" required>
+    <input type="number" id="preco-medio" placeholder="Preço Médio" required>
+    <select id="categoria">
+        <option value="Ações">Ações</option>
+        <option value="FIIs">FIIs</option>
+        <option value="Renda Fixa">Renda Fixa</option>
+        <option value="Exterior">Exterior</option>
+    </select>
+    <button type="submit">Adicionar</button>
+</form>
 
-                <form id="rfForm" class="asset-form hidden">
-                    <select required>
-                        <option value="">Tipo</option>
-                        <option>CDB</option>
-                        <option>LCI/LCA</option>
-                        <option>Tesouro Direto</option>
-                    </select>
-                    <input type="number" placeholder="Valor Investido" required>
-                    <input type="number" placeholder="Taxa (% a.a.)" step="0.01" required>
-                    <input type="date" placeholder="Vencimento" required>
-                    <button type="submit">Adicionar RF</button>
-                </form>
-            </div>
+<h2>Carteira</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Ticker</th>
+            <th>Categoria</th>
+            <th>Quantidade</th>
+            <th>Preço Médio</th>
+            <th>Valor Atual</th>
+            <th>Ganho/Perda</th>
+        </tr>
+    </thead>
+    <tbody id="carteira"></tbody>
+</table>
 
-            <div class="card">
-                <h2>Alocação da Carteira</h2>
-                <div id="allocationChart" style="height: 300px;"></div>
-            </div>
-
-            <div class="card">
-                <h2>Projeção de Fluxo</h2>
-                <div id="cashflowChart" style="height: 300px;"></div>
-            </div>
-        </div>
-
-        <div>
-            <div class="card">
-                <div class="metric-grid">
-                    <div class="metric rv-metric">
-                        <div class="label">RV: Valor de Mercado</div>
-                        <div class="value" id="rvMarketValue">R$ 0,00</div>
-                    </div>
-                    <div class="metric rf-metric">
-                        <div class="label">RF: Valor Atual</div>
-                        <div class="value" id="rfCurrentValue">R$ 0,00</div>
-                    </div>
-                    <div class="metric rf-metric">
-                        <div class="label">RF: Juros Acumulados</div>
-                        <div class="value" id="rfAccrued">R$ 0,00</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Detalhamento dos Ativos</h2>
-                <table id="assetsTable">
-                    <thead>
-                        <tr>
-                            <th>Ativo</th>
-                            <th>Tipo</th>
-                            <th>Valor Investido</th>
-                            <th>Valor Atual</th>
-                            <th>Vencimento</th>
-                            <th>Rentabilidade</th>
-                        </tr>
-                    </thead>
-                    <tbody id="assetsBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<canvas id="grafico"></canvas>
 
 <script>
-const DateTime = luxon.DateTime;
-const CDI = 0.1215; // Taxa CDI atualizada
-
-class FixedIncomeAsset {
-    constructor(data) {
-        this.type = data.type;
-        this.issuer = data.issuer;
-        this.investedValue = data.investedValue;
-        this.interestRate = data.interestRate;
-        this.startDate = DateTime.fromISO(data.startDate);
-        this.maturityDate = DateTime.fromISO(data.maturityDate);
-        this.index = data.index || 'CDI';
-    }
-
-    getCurrentValue() {
-        const days = this.maturityDate.diff(this.startDate, 'days').days;
-        const elapsedDays = DateTime.now().diff(this.startDate, 'days').days;
-        const rate = this.index === 'CDI' ? this.interestRate * CDI : this.interestRate;
-        
-        return this.investedValue * Math.pow(1 + rate, elapsedDays/252);
-    }
-
-    getAccruedInterest() {
-        return this.getCurrentValue() - this.investedValue;
-    }
-}
-
-class VariableIncomeAsset {
-    constructor(data) {
-        this.ticker = data.ticker;
-        this.quantity = data.quantity;
-        this.averagePrice = data.averagePrice;
-        this.dividendYield = data.dividendYield || 0;
-    }
-
-    async updateMarketPrice() {
-        const response = await fetch(`https://brapi.dev/api/quote/${this.ticker}?token=SUA_CHAVE`);
-        const data = await response.json();
-        this.marketPrice = data.results[0].regularMarketPrice;
-        this.dividendYield = data.results[0].dividendYield;
-    }
-
-    getMarketValue() {
-        return this.quantity * this.marketPrice;
-    }
-
-    getDividendProjection() {
-        return this.getMarketValue() * this.dividendYield;
-    }
-}
-
-class PortfolioManager {
-    constructor() {
-        this.rvAssets = [];
-        this.rfAssets = [];
-        this.cash = 0;
-        this.initializeCharts();
-        this.loadPortfolio();
-    }
-
-    initializeCharts() {
-        this.allocationChart = new ApexCharts(document.querySelector("#allocationChart"), {
-            chart: { type: 'pie' },
-            series: [],
-            labels: ['Renda Variável', 'Renda Fixa', 'Caixa'],
-            colors: [var(--rv-color), var(--rf-color), var(--cash-color)]
+    const carteira = [];
+    document.getElementById('form-ativo').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const ticker = document.getElementById('ticker').value.toUpperCase();
+        const quantidade = parseInt(document.getElementById('quantidade').value);
+        const precoMedio = parseFloat(document.getElementById('preco-medio').value);
+        const categoria = document.getElementById('categoria').value;
+        const precoAtual = precoMedio * (0.9 + Math.random() * 0.2); // Simulação
+        const ganhoPerda = ((precoAtual - precoMedio) * quantidade).toFixed(2);
+        carteira.push({ ticker, quantidade, precoMedio, precoAtual, ganhoPerda, categoria });
+        atualizarTabela();
+        atualizarGrafico();
+    });
+    function atualizarTabela() {
+        const tbody = document.getElementById('carteira');
+        tbody.innerHTML = '';
+        carteira.forEach(ativo => {
+            tbody.innerHTML += `<tr>
+                <td>${ativo.ticker}</td>
+                <td>${ativo.categoria}</td>
+                <td>${ativo.quantidade}</td>
+                <td>R$ ${ativo.precoMedio.toFixed(2)}</td>
+                <td>R$ ${ativo.precoAtual.toFixed(2)}</td>
+                <td style="color: ${ativo.ganhoPerda >= 0 ? 'green' : 'red'}">R$ ${ativo.ganhoPerda}</td>
+            </tr>`;
         });
-
-        this.cashflowChart = new ApexCharts(document.querySelector("#cashflowChart"), {
-            chart: { type: 'bar' },
-            series: [{
-                name: 'Projeção de Fluxo',
-                data: []
-            }],
-            xaxis: { type: 'category' }
+    }
+    function atualizarGrafico() {
+        const ctx = document.getElementById('grafico').getContext('2d');
+        const categorias = {};
+        carteira.forEach(ativo => {
+            categorias[ativo.categoria] = (categorias[ativo.categoria] || 0) + ativo.quantidade * ativo.precoAtual;
         });
-
-        this.allocationChart.render();
-        this.cashflowChart.render();
-    }
-
-    async loadPortfolio() {
-        // Carregar de localStorage ou API
-        await this.updatePrices();
-        this.updateDashboard();
-    }
-
-    async updatePrices() {
-        await Promise.all(this.rvAssets.map(asset => asset.updateMarketPrice()));
-    }
-
-    calculateAllocation() {
-        const rvValue = this.rvAssets.reduce((acc, asset) => acc + asset.getMarketValue(), 0);
-        const rfValue = this.rfAssets.reduce((acc, asset) => acc + asset.getCurrentValue(), 0);
-        const total = rvValue + rfValue + this.cash;
-
-        return {
-            rv: (rvValue / total) * 100,
-            rf: (rfValue / total) * 100,
-            cash: (this.cash / total) * 100
-        };
-    }
-
-    calculateCashflows() {
-        const projections = [];
-        
-        // Projeção de dividendos
-        this.rvAssets.forEach(asset => {
-            projections.push({
-                date: DateTime.now().plus({months: 1}).toISO(),
-                amount: asset.getDividendProjection(),
-                type: 'Dividendo'
-            });
-        });
-
-        // Projeção de juros
-        this.rfAssets.forEach(asset => {
-            projections.push({
-                date: asset.maturityDate.toISO(),
-                amount: asset.getAccruedInterest(),
-                type: 'Juros'
-            });
-        });
-
-        return projections;
-    }
-
-    updateDashboard() {
-        // Atualizar métricas
-        const rvValue = this.rvAssets.reduce((acc, asset) => acc + asset.getMarketValue(), 0);
-        const rfValue = this.rfAssets.reduce((acc, asset) => acc + asset.getCurrentValue(), 0);
-        const rfAccrued = this.rfAssets.reduce((acc, asset) => acc + asset.getAccruedInterest(), 0);
-
-        document.getElementById('rvMarketValue').textContent = 
-            `R$ ${rvValue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-        
-        document.getElementById('rfCurrentValue').textContent = 
-            `R$ ${rfValue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-
-        document.getElementById('rfAccrued').textContent = 
-            `R$ ${rfAccrued.toLocaleString('pt-BR', {minimumFractionDigits: 2})`;
-
-        // Atualizar gráficos
-        const allocation = this.calculateAllocation();
-        this.allocationChart.updateSeries([allocation.rv, allocation.rf, allocation.cash]);
-
-        const cashflows = this.calculateCashflows();
-        this.cashflowChart.updateOptions({
-            series: [{
-                data: cashflows.map(cf => cf.amount)
-            }],
-            xaxis: {
-                categories: cashflows.map(cf => 
-                    DateTime.fromISO(cf.date).toFormat('dd/LL/yyyy'))
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(categorias),
+                datasets: [{ data: Object.values(categorias), backgroundColor: ['red', 'blue', 'green', 'orange'] }]
             }
         });
     }
-
-    addRVAsset(ticker, quantity, price) {
-        const asset = new VariableIncomeAsset({
-            ticker,
-            quantity,
-            averagePrice: price
-        });
-        this.rvAssets.push(asset);
-        this.updateDashboard();
-    }
-
-    addRFAsset(type, invested, rate, maturity) {
-        const asset = new FixedIncomeAsset({
-            type,
-            investedValue: invested,
-            interestRate: rate,
-            startDate: DateTime.now().toISO(),
-            maturityDate: maturity
-        });
-        this.rfAssets.push(asset);
-        this.updateDashboard();
-    }
-}
-
-// Inicialização do Sistema
-const portfolio = new PortfolioManager();
-
-// Event Handlers
-document.getElementById('rvForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    portfolio.addRVAsset(
-        form.elements[0].value,
-        parseFloat(form.elements[1].value),
-        parseFloat(form.elements[2].value)
-    );
-    form.reset();
-});
-
-document.getElementById('rfForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const form = e.target;
-    portfolio.addRFAsset(
-        form.elements[0].value,
-        parseFloat(form.elements[1].value),
-        parseFloat(form.elements[2].value)/100,
-        form.elements[3].value
-    );
-    form.reset();
-});
-
-function switchTab(tab) {
-    document.querySelectorAll('.asset-form').forEach(f => f.classList.add('hidden'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active-tab'));
-    document.getElementById(`${tab}Form`).classList.remove('hidden');
-    document.querySelector(`[onclick="switchTab('${tab}')]`).classList.add('active-tab');
-}
 </script>
+
 </body>
 </html>
