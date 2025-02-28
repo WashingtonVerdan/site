@@ -3,93 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Investimentos</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Leitor de E-books</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        input, button, select { margin: 5px; padding: 10px; width: calc(25% - 10px); }
-        @media (max-width: 600px) {
-            input, button, select { width: calc(50% - 10px); }
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #ecf0f1;
         }
-        canvas { max-width: 100%; margin-top: 20px; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .ebook-list {
+            list-style: none;
+        }
+
+        .ebook-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .ebook-item:hover {
+            background-color: var(--accent-color);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+            position: relative;
+        }
+
+        #pdf-viewer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #fff;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                transform: translateX(-100%);
+                z-index: 100;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        .loader {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
-    <h1>Gestão de Investimentos</h1>
-    <h2>Adicionar Ativo</h2>
-    <form id="form-ativo">
-        <input type="text" id="ticker" placeholder="Ticker (Ex: AAPL, PETR4)" required>
-        <input type="number" step="0.01" id="quantidade" placeholder="Quantidade" required>
-        <input type="number" step="0.01" id="preco-medio" placeholder="Preço Médio" required>
-        <select id="categoria">
-            <option value="Ações">Ações</option>
-            <option value="FIIs">FIIs</option>
-            <option value="Renda Fixa">Renda Fixa</option>
-            <option value="Exterior">Exterior</option>
-        </select>
-        <input type="number" step="0.01" id="percentual-categoria" placeholder="% na Categoria">
-        <input type="number" step="0.01" id="percentual-ativo" placeholder="% no Ativo">
-        <button type="submit">Adicionar</button>
-    </form>
+    <header>
+        <div class="logo">E-book Reader</div>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    </header>
 
-    <h2>Carteira</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Ticker</th>
-                <th>Quantidade</th>
-                <th>Preço Médio</th>
-                <th>Categoria</th>
-                <th>% na Categoria</th>
-                <th>% no Ativo</th>
-            </tr>
-        </thead>
-        <tbody id="carteira-tbody">
-            <!-- Dados da carteira serão inseridos aqui via JavaScript -->
-        </tbody>
-    </table>
+    <div class="container">
+        <nav class="sidebar">
+            <h2>Biblioteca</h2>
+            <ul class="ebook-list" id="ebookList"></ul>
+        </nav>
 
-    <h2>Gráfico de Distribuição</h2>
-    <canvas id="distribuicaoGrafico"></canvas>
+        <main class="main-content">
+            <iframe id="pdf-viewer"></iframe>
+        </main>
+    </div>
+
+    <div class="loader" id="loader"><i class="fas fa-spinner fa-spin"></i></div>
+
+    <footer>
+        <p>© 2024 E-book Reader. Todos os direitos reservados.</p>
+    </footer>
 
     <script>
-        document.getElementById('form-ativo').addEventListener('submit', function(event) {
-            event.preventDefault();
-            let ticker = document.getElementById('ticker').value;
-            let quantidade = document.getElementById('quantidade').value;
-            let precoMedio = document.getElementById('preco-medio').value;
-            let categoria = document.getElementById('categoria').value;
-            let percentualCategoria = document.getElementById('percentual-categoria').value;
-            let percentualAtivo = document.getElementById('percentual-ativo').value;
+        // Lista de eBooks (substitua com seus próprios arquivos)
+        const ebooks = [
+            { title: 'Livro Exemplo 1', file: 'ebooks/livro1.pdf' },
+            { title: 'Livro Exemplo 2', file: 'ebooks/livro2.pdf' },
+            { title: 'Livro Exemplo 3', file: 'ebooks/livro3.pdf' }
+        ];
 
-            let tbody = document.getElementById('carteira-tbody');
-            let newRow = tbody.insertRow();
-            [ticker, quantidade, precoMedio, categoria, percentualCategoria, percentualAtivo].forEach((data, index) => {
-                newRow.insertCell(index).textContent = data;
-            });
-
-            // Limpar formulário após adicionar
-            this.reset();
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            populateEbookList();
         });
 
-        // Placeholder for Chart.js graph setup
-        var ctx = document.getElementById('distribuicaoGrafico').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Ações', 'FIIs', 'Renda Fixa', 'Exterior'],
-                datasets: [{
-                    data: [10, 20, 30, 40],
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true
+        // Preenche a lista de eBooks
+        function populateEbookList() {
+            const list = document.getElementById('ebookList');
+            ebooks.forEach(ebook => {
+                const li = document.createElement('li');
+                li.className = 'ebook-item';
+                li.textContent = ebook.title;
+                li.onclick = () => loadPDF(ebook.file);
+                list.appendChild(li);
+            });
+        }
+
+        // Carrega o PDF no visualizador
+        function loadPDF(filePath) {
+            const viewer = document.getElementById('pdf-viewer');
+            const loader = document.getElementById('loader');
+            
+            loader.style.display = 'block';
+            viewer.style.display = 'none';
+
+            // Usando o visualizador PDF.js
+            viewer.src = `web/viewer.html?file=${encodeURIComponent(filePath)}`;
+            
+            viewer.onload = () => {
+                loader.style.display = 'none';
+                viewer.style.display = 'block';
+            };
+        }
+
+        // Alternar sidebar em dispositivos móveis
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+
+        // Fechar sidebar ao clicar fora (para mobile)
+        document.addEventListener('click', (e) => {
+            const sidebar = document.querySelector('.sidebar');
+            if (window.innerWidth <= 768 && 
+                !e.target.closest('.sidebar') && 
+                !e.target.closest('.mobile-menu-btn')) {
+                sidebar.classList.remove('active');
             }
         });
     </script>
